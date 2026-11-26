@@ -1,11 +1,28 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
-  partialPrefetching: true,
-  serverExternalPackages: ["unpdf", "bcryptjs", "xlsx"],
+  serverExternalPackages: [
+    "@prisma/client",
+    "prisma",
+    "unpdf",
+    "bcryptjs",
+    "xlsx",
+  ],
+  outputFileTracingIncludes: {
+    "/": [
+      "./node_modules/.prisma/client/**/*",
+      "./node_modules/@prisma/client/**/*",
+    ],
+    "/admin": [
+      "./node_modules/.prisma/client/**/*",
+      "./node_modules/@prisma/client/**/*",
+    ],
+    "/api/**/*": [
+      "./node_modules/.prisma/client/**/*",
+      "./node_modules/@prisma/client/**/*",
+    ],
+  },
   turbopack: {
-    root: process.cwd(),
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],

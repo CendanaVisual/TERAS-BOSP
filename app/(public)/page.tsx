@@ -1,7 +1,9 @@
 import { Suspense } from "react";
 import { BudgetStage } from "@prisma/client";
-import { Info } from "lucide-react";
+import { AlertTriangle, Info } from "lucide-react";
 import { getPublicPortalData } from "@/lib/bosp-queries";
+
+export const dynamic = "force-dynamic";
 import { DocumentPreview } from "@/components/public/DocumentPreview";
 import { FeedbackForm } from "@/components/public/FeedbackForm";
 import { KpiCards } from "@/components/public/KpiCards";
@@ -40,7 +42,29 @@ async function PublicPortalContent({ searchParams }: PublicPageProps) {
       />
 
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-7 sm:px-6 lg:px-8 space-y-6">
-        {data.period ? (
+        {data.dbError ? (
+          <Card className="border-amber-200 bg-amber-50/70">
+            <CardContent className="py-10 text-center space-y-3">
+              <AlertTriangle className="mx-auto h-9 w-9 text-amber-600" />
+              <p className="text-lg font-bold text-[#0F2A56]">
+                {data.dbError === "MISSING_DATABASE_URL"
+                  ? "Konfigurasi Database Belum Terpasang"
+                  : "Koneksi ke Database Neon Belum Tersedia"}
+              </p>
+              <p className="text-sm text-slate-600 max-w-xl mx-auto">
+                Pastikan environment variable{" "}
+                <code className="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-mono">
+                  DATABASE_URL
+                </code>{" "}
+                sudah ditambahkan pada dashboard Vercel dan migrasi tabel (
+                <code className="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-mono">
+                  npx prisma db push
+                </code>
+                ) sudah dijalankan.
+              </p>
+            </CardContent>
+          </Card>
+        ) : data.period ? (
           <>
             {data.period.notes && (
               <div className="flex items-start gap-2.5 rounded-xl border border-blue-200 bg-blue-50/70 px-4 py-3 text-sm text-[#0F2A56]">

@@ -139,6 +139,7 @@ npm run db:seed
 ### 3. Deploy di Vercel
 1. Login ke [Vercel](https://vercel.com), klik **Add New... -> Project**, lalu impor repositori GitHub **`CendanaVisual/TERAS-BOSP`**.
 2. Pada bagian **Build & Output Settings**, *Build Command* default dari `package.json` sudah menjalankan `prisma generate && next build` (atau Anda dapat mengubahnya menjadi `npx prisma db push && prisma generate && next build` jika ingin skema selalu sinkron otomatis saat deploy).
-3. Masukkan seluruh **Environment Variables** (`DATABASE_URL`, `AUTH_SECRET`, `AI_API_KEY`, `BLOB_READ_WRITE_TOKEN`) di menu **Environment Variables**.
+3. Masukkan seluruh **Environment Variables** (`DATABASE_URL`, `AUTH_SECRET`, `AI_API_KEY`, `BLOB_READ_WRITE_TOKEN`) di menu **Environment Variables** sebelum atau setelah build, lalu lakukan **Redeploy** (tanpa build cache) apabila variabel baru ditambahkan.
+   > **Catatan Neon + Vercel:** Connection string Neon (`?sslmode=require&channel_binding=require`) secara otomatis disanitasi oleh `lib/prisma.ts` agar kompatibel dengan runtime serverless Linux (`rhel-openssl-3.0.x`).
 4. Aktifkan **Vercel Blob Storage** pada tab **Storage** di dashboard proyek Vercel agar `BLOB_READ_WRITE_TOKEN` otomatis terpasang.
 5. Klik **Deploy** dan verifikasi endpoint `/api/health` mengembalikan `{ "status": "ok", "database": "connected" }`.

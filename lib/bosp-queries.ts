@@ -1,5 +1,5 @@
 import { BudgetStage, FundSource, PublishStatus } from "@prisma/client";
-import { prisma } from "./prisma";
+import { getSanitizedDatabaseUrl, prisma } from "./prisma";
 import {
   BOSP_COMPONENTS,
   BOSP_COMPONENT_COLORS,
@@ -179,96 +179,124 @@ export async function getPublicPortalData(filters?: {
   year?: number;
   stage?: BudgetStage;
 }) {
-  const [schoolProfile, publishedPeriods] = await Promise.all([
-    prisma.schoolProfile.findFirst(),
-    prisma.budgetPeriod.findMany({
-      where: { status: PublishStatus.PUBLISHED },
-      orderBy: [{ fiscalYear: "desc" }, { stage: "asc" }],
-      select: {
-        id: true,
-        fiscalYear: true,
-        stage: true,
-        publishedAt: true,
-      },
-    }),
-  ]);
+  const defaultProfile: SerializedSchoolProfile = {
+    id: "default",
+    name: "TERAS-BOSP Portal Sekolah",
+    npsn: "-",
+    address: "Alamat sekolah belum diatur",
+    headmaster: "-",
+    treasurer: "-",
+    phone: "",
+    email: "",
+    district: "",
+    province: "",
+    updatedAt: new Date().toISOString(),
+  };
 
-  const availableYears = Array.from(
-    new Set(publishedPeriods.map((p) => p.fiscalYear))
-  ).sort((a, b) => b - a);
-
-  const selectedYear =
-    filters?.year && availableYears.includes(filters.year)
-      ? filters.year
-      : availableYears[0] ?? new Date().getFullYear();
-
-  const stagesForYear = publishedPeriods
-    .filter((p) => p.fiscalYear === selectedYear)
-    .map((p) => p.stage);
-
-  const stagePriority: BudgetStage[] = ["TAHAP_1", "TAHAP_2", "TAHUNAN"];
-  const orderedStages = stagePriority.filter((s) => stagesForYear.includes(s));
-
-  const selectedStage =
-    filters?.stage && orderedStages.includes(filters.stage)
-      ? filters.stage
-      : orderedStages[0] ?? null;
-
-  let activePeriod: SerializedBudgetPeriod | null = null;
-
-  if (selectedStage) {
-    const found = await prisma.budgetPeriod.findFirst({
-      where: {
-        fiscalYear: selectedYear,
-        stage: selectedStage,
-        status: PublishStatus.PUBLISHED,
-      },
-      orderBy: { updatedAt: "desc" },
-      include: {
-        expenses: {
-          orderBy: [{ componentCategory: "asc" }, { accountCode: "asc" }],
-        },
-      },
-    });
-    if (found) {
-      activePeriod = serializeBudgetPeriod(found);
-    }
+  if (!getSanitizedDatabaseUrl()) {
+    return {
+      schoolProfile: defaultProfile,
+      availableYears: [] as number[],
+      availableStages: [] as BudgetStage[],
+      selectedYear: new Date().getFullYear(),
+      selectedStage: null,
+      period: null,
+      dbError: "MISSING_DATABASE_URL" as const,
+    };
   }
 
-  const profile: SerializedSchoolProfile = schoolProfile
-    ? {
-        id: schoolProfile.id,
-        name: schoolProfile.name,
-        npsn: schoolProfile.npsn,
-        address: schoolProfile.address,
-        headmaster: schoolProfile.headmaster,
-        treasurer: schoolProfile.treasurer,
-        phone: schoolProfile.phone,
-        email: schoolProfile.email,
-        district: schoolProfile.district,
-        province: schoolProfile.province,
-        updatedAt: schoolProfile.updatedAt.toISOString(),
-      }
-    : {
-        id: "default",
-        name: "Sekolah Dasar Negeri",
-        npsn: "-",
-        address: "Alamat sekolah belum diatur",
-        headmaster: "-",
-        treasurer: "-",
-        phone: "",
-        email: "",
-        district: "",
-        province: "",
-        updatedAt: new Date().toISOString(),
-      };
+  try {
+    const [schoolProfile, publishedPeriods] = await Promise.all([
+      prisma.schoolProfile.findFirst(),
+      prisma.budgetPeriod.findMany({
+        where: { status: PublishStatus.PUBLISHED },
+        orderBy: [{ fiscalYear: "desc" }, { stage: "asc" }],
+        select: {
+          id: true,
+          fiscalYear: true,
+          stage: true,
+          publishedAt: true,
+        },
+      }),
+    ]);
 
-  return {
-    schoolProfile: profile,
-    availableYears,
-    availableStages: orderedStages,
-    selectedYear,
-    selectedStage,
-    period: activePeriod,
-  };
+    const availableYears = Array.from(
+      new Set(publishedPeriods.map((p) => p.fiscalYear))
+    ).sort((a, b) => b - a);
+
+    const selectedYear =
+      filters?.year && availableYears.includes(filters.year)
+        ? filters.year
+        : availableYears[0] ?? new Date().getFullYear();
+
+    const stagesForYear = publishedPeriods
+      .filter((p) => p.fiscalYear === selectedYear)
+      .map((p) => p.stage);
+
+    const stagePriority: BudgetStage[] = ["TAHAP_1", "TAHAP_2", "TAHUNAN"];
+    const orderedStages = stagePriority.filter((s) => stagesForYear.includes(s));
+
+    const selectedStage =
+      filters?.stage && orderedStages.includes(filters.stage)
+        ? filters.stage
+        : orderedStages[0] ?? null;
+
+    let activePeriod: SerializedBudgetPeriod | null = null;
+
+    if (selectedStage) {
+      const found = await prisma.budgetPeriod.findFirst({
+        where: {
+          fiscalYear: selectedYear,
+          stage: selectedStage,
+          status: PublishStatus.PUBLISHED,
+        },
+        orderBy: { updatedAt: "desc" },
+        include: {
+          expenses: {
+            orderBy: [{ componentCategory: "asc" }, { accountCode: "asc" }],
+          },
+        },
+      });
+      if (found) {
+        activePeriod = serializeBudgetPeriod(found);
+      }
+    }
+
+    const profile: SerializedSchoolProfile = schoolProfile
+      ? {
+          id: schoolProfile.id,
+          name: schoolProfile.name,
+          npsn: schoolProfile.npsn,
+          address: schoolProfile.address,
+          headmaster: schoolProfile.headmaster,
+          treasurer: schoolProfile.treasurer,
+          phone: schoolProfile.phone,
+          email: schoolProfile.email,
+          district: schoolProfile.district,
+          province: schoolProfile.province,
+          updatedAt: schoolProfile.updatedAt.toISOString(),
+        }
+      : defaultProfile;
+
+    return {
+      schoolProfile: profile,
+      availableYears,
+      availableStages: orderedStages,
+      selectedYear,
+      selectedStage,
+      period: activePeriod,
+      dbError: null,
+    };
+  } catch (error) {
+    console.error("Failed to fetch public BOSP data:", error);
+    return {
+      schoolProfile: defaultProfile,
+      availableYears: [] as number[],
+      availableStages: [] as BudgetStage[],
+      selectedYear: new Date().getFullYear(),
+      selectedStage: null,
+      period: null,
+      dbError: "CONNECTION_ERROR" as const,
+    };
+  }
 }

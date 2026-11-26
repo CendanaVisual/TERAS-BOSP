@@ -49,14 +49,21 @@ export function ExpenseTable({
       setSortAsc(!sortAsc);
     } else {
       setSortField(field);
-      setSortAsc(field === "accountCode" || field === "componentCategory" || field === "description");
+      setSortAsc(
+        field === "accountCode" ||
+          field === "componentCategory" ||
+          field === "description"
+      );
     }
   };
 
   const filteredAndSorted = useMemo(() => {
     const q = search.toLowerCase().trim();
     const filtered = expenses.filter((item) => {
-      if (selectedComponent !== "ALL" && item.componentCategory !== selectedComponent) {
+      if (
+        selectedComponent !== "ALL" &&
+        item.componentCategory !== selectedComponent
+      ) {
         return false;
       }
       if (fundSource !== "ALL" && item.fundSource !== fundSource) {
@@ -96,11 +103,13 @@ export function ExpenseTable({
 
   return (
     <Card id="rincian-belanja">
-      <CardHeader className="border-b border-[#EFE6D5] pb-4">
+      <CardHeader className="border-b border-[#EFE6D5] p-4 sm:p-6 pb-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <CardTitle>Tabel Rincian Realisasi Belanja</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-base sm:text-lg">
+              Tabel Rincian Realisasi Belanja
+            </CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
               Menampilkan {filteredAndSorted.length} dari {expenses.length} pos kegiatan belanja
             </CardDescription>
           </div>
@@ -123,14 +132,14 @@ export function ExpenseTable({
         </div>
 
         {/* Search & Filters */}
-        <div className="mt-4 grid gap-3 sm:grid-cols-12 no-print">
+        <div className="mt-4 grid gap-2.5 sm:gap-3 sm:grid-cols-12 no-print">
           <div className="relative sm:col-span-5">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-3 sm:top-2.5 h-4 w-4 text-[#8E8677]" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cari kode rekening, uraian kegiatan..."
-              className="pl-9"
+              placeholder="Cari kode rekening, uraian..."
+              className="h-11 sm:h-10 pl-9 text-base sm:text-sm"
             />
           </div>
           <div className="sm:col-span-4">
@@ -138,8 +147,9 @@ export function ExpenseTable({
               aria-label="Filter Komponen BOSP"
               value={selectedComponent}
               onChange={(e) => onSelectComponent(e.target.value)}
+              className="h-11 sm:h-10 text-sm"
             >
-              <option value="ALL">Semua 12 Komponen Standar BOSP</option>
+              <option value="ALL">Semua 12 Komponen BOSP</option>
               {BOSP_COMPONENTS.map((comp) => (
                 <option key={comp} value={comp}>
                   {comp}
@@ -148,11 +158,12 @@ export function ExpenseTable({
             </Select>
           </div>
           <div className="sm:col-span-3 flex items-center gap-2">
-            <Filter className="h-4 w-4 text-slate-400 shrink-0 hidden sm:block" />
+            <Filter className="h-4 w-4 text-[#8E8677] shrink-0 hidden sm:block" />
             <Select
               aria-label="Filter Sumber Dana"
               value={fundSource}
               onChange={(e) => setFundSource(e.target.value)}
+              className="h-11 sm:h-10 text-sm"
             >
               <option value="ALL">Semua Sumber Dana</option>
               <option value="BOSP_REGULER">BOSP Reguler</option>
@@ -163,7 +174,99 @@ export function ExpenseTable({
       </CardHeader>
 
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
+        {/* Clean Mobile Card List (< md) */}
+        <div className="md:hidden divide-y divide-[#EFE6D5]">
+          {filteredAndSorted.length === 0 ? (
+            <div className="px-4 py-10 text-center text-sm text-[#6B6253]">
+              Tidak ada rincian belanja yang cocok dengan filter pencarian.
+            </div>
+          ) : (
+            <>
+              {filteredAndSorted.map((item) => (
+                <div key={item.id} className="p-4 space-y-2.5 bg-[#FFFDF9]">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-[11px] font-medium text-[#6B6253]">
+                      {item.accountCode}
+                    </span>
+                    <Badge
+                      variant={
+                        item.fundSource === "BOSP_KINERJA" ? "navy" : "emerald"
+                      }
+                      className="text-[10px]"
+                    >
+                      {FUND_SOURCE_LABELS[item.fundSource]}
+                    </Badge>
+                  </div>
+
+                  <p className="text-sm font-semibold text-[#141923] leading-snug">
+                    {item.description}
+                  </p>
+
+                  <p className="text-[11px] font-medium text-[#8A6820] bg-[#FAF2E3] border border-[#EADBC0] rounded-lg px-2.5 py-1 inline-block">
+                    {item.componentCategory}
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-2 rounded-xl border border-[#ECE2CF] bg-[#FAF6EE] p-2.5 text-center">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wide text-[#736957]">
+                        RKAS
+                      </p>
+                      <p className="text-xs font-mono font-semibold text-[#3C372E] tabular-nums mt-0.5">
+                        {formatRupiah(item.plannedAmount)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wide text-[#736957]">
+                        Realisasi
+                      </p>
+                      <p className="text-xs font-mono font-bold text-[#0D6E52] tabular-nums mt-0.5">
+                        {formatRupiah(item.realizedAmount)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wide text-[#736957]">
+                        Serapan
+                      </p>
+                      <p className="text-xs font-mono font-bold text-[#141923] tabular-nums mt-0.5">
+                        {item.absorptionPct}%
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Mobile Total Summary */}
+              <div className="p-4 bg-[#FAF2E3] border-t-2 border-[#D9C7A3] space-y-2">
+                <p className="text-xs font-bold uppercase tracking-wider text-[#141923]">
+                  Total ({filteredAndSorted.length} pos belanja)
+                </p>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div>
+                    <p className="text-[10px] text-[#6B6253]">RKAS</p>
+                    <p className="text-xs font-mono font-bold text-[#141923] tabular-nums">
+                      {formatRupiah(totals.planned)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#0D6E52]">Realisasi</p>
+                    <p className="text-xs font-mono font-extrabold text-[#0D6E52] tabular-nums">
+                      {formatRupiah(totals.realized)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#6B6253]">Serapan</p>
+                    <p className="text-xs font-mono font-bold text-[#141923] tabular-nums">
+                      {totals.pct}%
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Full Sortable Table (md+) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-[#F6EFE2] border-b border-[#E5DAC5] text-xs uppercase tracking-wider text-[#4E4639]">
               <tr>
@@ -171,7 +274,7 @@ export function ExpenseTable({
                   <button
                     type="button"
                     onClick={() => toggleSort("accountCode")}
-                    className="inline-flex items-center gap-1 hover:text-[#0F2A56] cursor-pointer"
+                    className="inline-flex items-center gap-1 hover:text-[#141923] cursor-pointer"
                   >
                     Kode Rekening
                     <ArrowUpDown className="h-3 w-3" />
@@ -181,7 +284,7 @@ export function ExpenseTable({
                   <button
                     type="button"
                     onClick={() => toggleSort("componentCategory")}
-                    className="inline-flex items-center gap-1 hover:text-[#0F2A56] cursor-pointer"
+                    className="inline-flex items-center gap-1 hover:text-[#141923] cursor-pointer"
                   >
                     Komponen BOSP
                     <ArrowUpDown className="h-3 w-3" />
@@ -191,7 +294,7 @@ export function ExpenseTable({
                   <button
                     type="button"
                     onClick={() => toggleSort("description")}
-                    className="inline-flex items-center gap-1 hover:text-[#0F2A56] cursor-pointer"
+                    className="inline-flex items-center gap-1 hover:text-[#141923] cursor-pointer"
                   >
                     Uraian Kegiatan / Belanja
                     <ArrowUpDown className="h-3 w-3" />
@@ -201,7 +304,7 @@ export function ExpenseTable({
                   <button
                     type="button"
                     onClick={() => toggleSort("fundSource")}
-                    className="inline-flex items-center gap-1 hover:text-[#0F2A56] cursor-pointer"
+                    className="inline-flex items-center gap-1 hover:text-[#141923] cursor-pointer"
                   >
                     Sumber Dana
                     <ArrowUpDown className="h-3 w-3" />
@@ -211,7 +314,7 @@ export function ExpenseTable({
                   <button
                     type="button"
                     onClick={() => toggleSort("plannedAmount")}
-                    className="inline-flex items-center gap-1 hover:text-[#0F2A56] cursor-pointer ml-auto"
+                    className="inline-flex items-center gap-1 hover:text-[#141923] cursor-pointer ml-auto"
                   >
                     Anggaran (RKAS)
                     <ArrowUpDown className="h-3 w-3" />
@@ -221,7 +324,7 @@ export function ExpenseTable({
                   <button
                     type="button"
                     onClick={() => toggleSort("realizedAmount")}
-                    className="inline-flex items-center gap-1 hover:text-[#0F2A56] cursor-pointer ml-auto"
+                    className="inline-flex items-center gap-1 hover:text-[#141923] cursor-pointer ml-auto"
                   >
                     Realisasi (Rp)
                     <ArrowUpDown className="h-3 w-3" />
@@ -231,7 +334,7 @@ export function ExpenseTable({
                   <button
                     type="button"
                     onClick={() => toggleSort("absorptionPct")}
-                    className="inline-flex items-center gap-1 hover:text-[#0F2A56] cursor-pointer ml-auto"
+                    className="inline-flex items-center gap-1 hover:text-[#141923] cursor-pointer ml-auto"
                   >
                     Serapan (%)
                     <ArrowUpDown className="h-3 w-3" />
@@ -239,12 +342,12 @@ export function ExpenseTable({
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[#EFE6D5]">
               {filteredAndSorted.length === 0 ? (
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-4 py-10 text-center text-slate-500"
+                    className="px-4 py-10 text-center text-[#6B6253]"
                   >
                     Tidak ada rincian belanja yang cocok dengan filter pencarian.
                   </td>
@@ -253,15 +356,15 @@ export function ExpenseTable({
                 filteredAndSorted.map((item) => (
                   <tr
                     key={item.id}
-                    className="hover:bg-slate-50/80 transition-colors"
+                    className="hover:bg-[#FAF6EE]/80 transition-colors"
                   >
-                    <td className="px-4 py-3 font-mono text-xs text-slate-600 whitespace-nowrap">
+                    <td className="px-4 py-3 font-mono text-xs text-[#5C5446] whitespace-nowrap">
                       {item.accountCode}
                     </td>
-                    <td className="px-4 py-3 text-xs font-medium text-[#0F2A56] max-w-[200px]">
+                    <td className="px-4 py-3 text-xs font-medium text-[#141923] max-w-[200px]">
                       {item.componentCategory}
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-800">
+                    <td className="px-4 py-3 text-sm text-[#1E2430]">
                       {item.description}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
@@ -275,19 +378,19 @@ export function ExpenseTable({
                         {FUND_SOURCE_LABELS[item.fundSource]}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-right font-mono text-xs sm:text-sm text-slate-600 tabular-nums whitespace-nowrap">
+                    <td className="px-4 py-3 text-right font-mono text-xs sm:text-sm text-[#5C5446] tabular-nums whitespace-nowrap">
                       {formatRupiah(item.plannedAmount)}
                     </td>
-                    <td className="px-4 py-3 text-right font-mono text-xs sm:text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap">
+                    <td className="px-4 py-3 text-right font-mono text-xs sm:text-sm font-semibold text-[#141923] tabular-nums whitespace-nowrap">
                       {formatRupiah(item.realizedAmount)}
                     </td>
                     <td className="px-4 py-3 text-right whitespace-nowrap">
                       <span
                         className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold tabular-nums ${
                           item.absorptionPct >= 90
-                            ? "bg-emerald-50 text-emerald-700"
+                            ? "bg-emerald-50 text-[#0D6E52]"
                             : item.absorptionPct >= 60
-                            ? "bg-blue-50 text-blue-700"
+                            ? "bg-[#F8F1E1] text-[#6B4F14]"
                             : "bg-amber-50 text-amber-800"
                         }`}
                       >

@@ -50,22 +50,27 @@ export function DocumentPreview({ period }: { period: SerializedBudgetPeriod }) 
             </CardDescription>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <a href={previewUrl} target="_blank" rel="noopener noreferrer">
-              <Button type="button" variant="outline" size="sm">
+          <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
+            <a
+              href={previewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto"
+            >
+              <Button type="button" variant="outline" size="sm" className="w-full sm:w-auto h-10 sm:h-8">
                 <ExternalLink className="h-3.5 w-3.5" />
                 Buka Tab Baru
               </Button>
             </a>
-            <a href={downloadOriginalUrl} download>
-              <Button type="button" variant="emerald" size="sm">
+            <a href={downloadOriginalUrl} download className="w-full sm:w-auto">
+              <Button type="button" variant="emerald" size="sm" className="w-full sm:w-auto h-10 sm:h-8">
                 <Download className="h-3.5 w-3.5" />
                 Unduh {isExcel ? "Excel Asli" : "Dokumen PDF"}
               </Button>
             </a>
             {isExcel && (
-              <a href={downloadPdfUrl} download>
-                <Button type="button" variant="default" size="sm">
+              <a href={downloadPdfUrl} download className="w-full sm:w-auto">
+                <Button type="button" variant="default" size="sm" className="w-full sm:w-auto h-10 sm:h-8">
                   <Download className="h-3.5 w-3.5" />
                   Unduh Rekap PDF
                 </Button>
@@ -75,12 +80,12 @@ export function DocumentPreview({ period }: { period: SerializedBudgetPeriod }) 
         </div>
       </CardHeader>
 
-      <CardContent className="pt-5">
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
+      <CardContent className="p-4 sm:p-6 pt-5">
+        <div className="overflow-hidden rounded-xl border border-[#E5DAC5] bg-[#F5EFE3]">
           <iframe
             title={`Pratinjau Dokumen BOSP ${period.fiscalYear} ${period.stage}`}
             src={previewUrl}
-            className="h-[480px] w-full bg-white"
+            className="h-[340px] sm:h-[480px] w-full bg-white"
           />
         </div>
       </CardContent>

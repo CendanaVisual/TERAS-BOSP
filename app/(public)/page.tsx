@@ -51,7 +51,7 @@ async function PublicPortalContent({ searchParams }: PublicPageProps) {
         publishedAt={data.period?.publishedAt ?? null}
       />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8 space-y-7">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-3.5 py-5 sm:px-6 sm:py-8 lg:px-8 space-y-5 sm:space-y-7">
         {data.period ? (
           <>
             {data.period.notes && (
@@ -102,15 +102,15 @@ async function PublicPortalContent({ searchParams }: PublicPageProps) {
                   </span>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-                  <a href="#pengaduan-masyarakat">
-                    <Button type="button" variant="gold" size="default">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 pt-2">
+                  <a href="#pengaduan-masyarakat" className="w-full sm:w-auto">
+                    <Button type="button" variant="gold" size="default" className="w-full sm:w-auto h-11 sm:h-10">
                       <MessageSquarePlus className="h-4 w-4" />
                       Sampaikan Pertanyaan / Saran
                     </Button>
                   </a>
-                  <Link href="/admin">
-                    <Button type="button" variant="outline" size="default">
+                  <Link href="/admin" className="w-full sm:w-auto">
+                    <Button type="button" variant="outline" size="default" className="w-full sm:w-auto h-11 sm:h-10">
                       <Lock className="h-4 w-4" />
                       Masuk Portal Bendahara
                     </Button>

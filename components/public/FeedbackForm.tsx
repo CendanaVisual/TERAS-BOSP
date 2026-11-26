@@ -61,21 +61,23 @@ export function FeedbackForm() {
 
   return (
     <Card className="no-print border-[#E5DAC5]">
-      <CardHeader className="border-b border-[#EFE6D5] pb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#C9A24D]/40 bg-[#141923] text-[#E6C67A]">
+      <CardHeader className="border-b border-[#EFE6D5] p-4 sm:p-6 pb-4">
+        <div className="flex items-start sm:items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#C9A24D]/40 bg-[#141923] text-[#E6C67A]">
             <MessageSquarePlus className="h-5 w-5" />
           </div>
           <div>
-            <CardTitle>Kanal Pengaduan &amp; Umpan Balik Masyarakat</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-base sm:text-lg">
+              Kanal Pengaduan &amp; Umpan Balik Masyarakat
+            </CardTitle>
+            <CardDescription className="text-xs sm:text-sm mt-0.5">
               Orang tua murid, komite sekolah, dan masyarakat dapat menyampaikan pertanyaan, saran, atau pengaduan terkait pengelolaan dana BOSP.
             </CardDescription>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-5">
+      <CardContent className="p-4 sm:p-6 pt-5">
         {successMsg && (
           <div className="mb-4 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
             <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
@@ -144,11 +146,16 @@ export function FeedbackForm() {
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <p className="text-xs text-slate-500">
-              Pesan akan tersimpan langsung ke kotak masuk Bendahara & Kepala Sekolah.
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-1">
+            <p className="text-xs text-[#6B6253]">
+              Pesan akan tersimpan langsung ke kotak masuk Bendahara &amp; Kepala Sekolah.
             </p>
-            <Button type="submit" disabled={submitting} variant="default">
+            <Button
+              type="submit"
+              disabled={submitting}
+              variant="gold"
+              className="w-full sm:w-auto h-11 sm:h-10 font-bold"
+            >
               <Send className="h-4 w-4" />
               {submitting ? "Mengirim..." : "Kirim Aspirasi / Pengaduan"}
             </Button>

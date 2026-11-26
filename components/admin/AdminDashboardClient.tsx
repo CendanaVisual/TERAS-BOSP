@@ -105,9 +105,9 @@ export function AdminDashboardClient({
       {/* Top Admin Header — Obsidian & Balinese Gold */}
       <header className="relative overflow-hidden border-b border-[#C9A24D]/30 bali-obsidian-hero text-white">
         <div className="pointer-events-none absolute inset-0 bali-patra-overlay opacity-70" />
-        <div className="relative mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3.5">
-            <div className="relative h-11 w-11 shrink-0 rounded-full p-0.5 bg-gradient-to-b from-[#DFBC6F]/70 to-[#8A6820]/30 shadow-[0_0_16px_rgba(212,175,55,0.3)]">
+        <div className="relative mx-auto flex max-w-7xl flex-col sm:flex-row sm:items-center justify-between gap-3 px-3.5 py-3.5 sm:px-6 sm:py-4 lg:px-8">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="relative h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-full p-0.5 bg-gradient-to-b from-[#DFBC6F]/70 to-[#8A6820]/30 shadow-[0_0_16px_rgba(212,175,55,0.3)]">
               <div className="relative h-full w-full rounded-full overflow-hidden bg-[#10141C]">
                 <Image
                   src="/logo.gif"
@@ -118,29 +118,28 @@ export function AdminDashboardClient({
                 />
               </div>
             </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-display text-base sm:text-lg font-bold tracking-wide text-[#F4E6C3]">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <h1 className="font-display text-sm sm:text-lg font-bold tracking-wide text-[#F4E6C3] truncate">
                   Dashboard Admin TERAS-BOSP
                 </h1>
-                <Badge className="bg-[#0D6E52]/35 text-emerald-200 border-emerald-400/40">
-                  {publishedCount} Laporan Tayang
+                <Badge className="bg-[#0D6E52]/35 text-emerald-200 border-emerald-400/40 text-[10px] sm:text-xs">
+                  {publishedCount} Tayang
                 </Badge>
               </div>
-              <p className="text-xs text-[#C7BFA9]">
-                {profile.name} (NPSN: {profile.npsn}) • Masuk sebagai{" "}
-                <strong className="text-[#FAF5EA]">{session.email}</strong>
+              <p className="text-[11px] sm:text-xs text-[#C7BFA9] truncate">
+                {profile.name} • <strong className="text-[#FAF5EA]">{session.email}</strong>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Link href="/" target="_blank">
+          <div className="grid grid-cols-2 sm:flex items-center gap-2">
+            <Link href="/" target="_blank" className="w-full sm:w-auto">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                className="border-[#C9A24D]/40 bg-white/10 text-[#F4E6C3] hover:bg-white/20 hover:text-white"
+                className="w-full sm:w-auto border-[#C9A24D]/40 bg-white/10 text-[#F4E6C3] hover:bg-white/20 hover:text-white"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Portal Publik
@@ -151,6 +150,7 @@ export function AdminDashboardClient({
               variant="gold"
               size="sm"
               onClick={handleLogout}
+              className="w-full sm:w-auto"
             >
               <LogOut className="h-3.5 w-3.5" />
               Keluar
@@ -159,8 +159,8 @@ export function AdminDashboardClient({
         </div>
 
         {/* Navigation Tabs */}
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav className="flex gap-1 overflow-x-auto pb-0 pt-1">
+        <div className="relative mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8">
+          <nav className="flex gap-1 overflow-x-auto no-scrollbar pb-0 pt-1">
             {navItems.map((tab) => {
               const active = activeTab === tab.id;
               return (
@@ -168,7 +168,7 @@ export function AdminDashboardClient({
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`inline-flex items-center gap-2 whitespace-nowrap rounded-t-xl px-4 py-2.5 text-sm font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 sm:gap-2 whitespace-nowrap rounded-t-xl px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                     active
                       ? "bg-[#F6F1E7] text-[#141923] shadow-xs"
                       : "text-[#D7CEBE] hover:bg-white/10 hover:text-[#FAF5EA]"

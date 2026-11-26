@@ -50,10 +50,10 @@ export function PublicHeader({
   return (
     <header className="relative">
       {/* Top Balinese Luxury Architectural Nav */}
-      <div className="border-b border-[#C9A24D]/25 bg-[#0D1017]/95 backdrop-blur-md text-white no-print">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="relative h-9 w-9 shrink-0 rounded-full ring-1 ring-[#C9A24D]/50 shadow-[0_0_14px_rgba(201,162,77,0.3)] overflow-hidden bg-[#12161F]">
+      <div className="sticky top-0 z-30 border-b border-[#C9A24D]/25 bg-[#0D1017]/95 backdrop-blur-md text-white no-print">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3.5 py-2 sm:px-6 sm:py-2.5 lg:px-8">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="relative h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-full ring-1 ring-[#C9A24D]/50 shadow-[0_0_14px_rgba(201,162,77,0.3)] overflow-hidden bg-[#12161F]">
               <Image
                 src="/logo.gif"
                 alt="Logo TERAS-BOSP"
@@ -62,8 +62,8 @@ export function PublicHeader({
                 className="object-cover"
               />
             </div>
-            <div>
-              <span className="font-display text-sm sm:text-base font-bold tracking-wider text-[#E8C97B]">
+            <div className="min-w-0">
+              <span className="font-display text-sm sm:text-base font-bold tracking-wider text-[#E8C97B] whitespace-nowrap">
                 TERAS-BOSP
               </span>
               <span className="hidden md:inline text-xs text-[#C7BFA9] ml-2.5 border-l border-[#C9A24D]/30 pl-2.5">
@@ -72,107 +72,115 @@ export function PublicHeader({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => window.print()}
-              className="hidden sm:inline-flex border-[#C9A24D]/35 bg-[#171C26] text-[#F2E9D5] hover:bg-[#222938] hover:text-white"
+              aria-label="Cetak Laporan"
+              className="border-[#C9A24D]/35 bg-[#171C26] text-[#F2E9D5] hover:bg-[#222938] hover:text-white px-2.5 sm:px-3"
             >
               <Printer className="h-3.5 w-3.5 text-[#D4AF37]" />
-              Cetak Laporan
+              <span className="hidden sm:inline">Cetak Laporan</span>
             </Button>
             <Button
               type="button"
               variant="gold"
               size="sm"
               onClick={() => router.push("/admin")}
+              className="px-3"
             >
               <Lock className="h-3.5 w-3.5" />
-              Portal Admin
+              <span>Admin</span>
+              <span className="hidden sm:inline -ml-1">Portal</span>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Hero School Identity & Period Filters — Modern Balinese Obsidian & Gold */}
+      {/* Hero School Identity & Period Filters */}
       <div className="relative overflow-hidden bali-obsidian-hero text-white">
         <div className="pointer-events-none absolute inset-0 bali-patra-overlay opacity-80" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bali-gold-divider" />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-8 sm:py-10 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+        <div className="relative mx-auto max-w-7xl px-4 py-6 sm:py-10 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-7">
             {/* School Identity with Balinese Medallion Logo */}
-            <div className="flex flex-col sm:flex-row sm:items-start gap-5 max-w-3xl">
-              <div className="relative h-20 w-20 sm:h-24 sm:w-24 shrink-0 rounded-full p-1 bg-gradient-to-b from-[#DFBC6F]/60 to-[#8A6820]/30 shadow-[0_0_32px_rgba(212,175,55,0.28)]">
-                <div className="relative h-full w-full rounded-full overflow-hidden bg-[#10141C]">
-                  <Image
-                    src="/logo.gif"
-                    alt={`Logo Resmi ${school.name}`}
-                    fill
-                    unoptimized
-                    priority
-                    className="object-cover"
-                  />
+            <div className="space-y-3.5 max-w-3xl">
+              <div className="flex items-center gap-3.5 sm:gap-5">
+                <div className="relative h-16 w-16 sm:h-24 sm:w-24 shrink-0 rounded-full p-1 bg-gradient-to-b from-[#DFBC6F]/65 to-[#8A6820]/30 shadow-[0_0_28px_rgba(212,175,55,0.28)]">
+                  <div className="relative h-full w-full rounded-full overflow-hidden bg-[#10141C]">
+                    <Image
+                      src="/logo.gif"
+                      alt={`Logo Resmi ${school.name}`}
+                      fill
+                      unoptimized
+                      priority
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 min-w-0">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Badge className="bg-[#0D6E52]/30 text-emerald-200 border-emerald-400/40 text-[11px]">
+                      <FileCheck2 className="h-3 w-3" />
+                      Publikasi Resmi
+                    </Badge>
+                    <Badge className="bg-[#C9A24D]/15 text-[#F0D792] border-[#C9A24D]/40 font-mono text-[11px]">
+                      NPSN: {school.npsn}
+                    </Badge>
+                  </div>
+
+                  <h1 className="font-display text-xl sm:text-3xl lg:text-4xl font-bold tracking-wide text-[#FAF5EA] leading-tight flex items-center gap-2.5">
+                    <Building2 className="h-6 w-6 text-[#D4AF37] shrink-0 hidden md:block" />
+                    <span className="truncate sm:whitespace-normal">
+                      {school.name}
+                    </span>
+                  </h1>
+
+                  {publishedAt && (
+                    <p className="text-[11px] sm:text-xs text-[#C7BFA9]">
+                      Dipublikasikan: {formatDateId(publishedAt)}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge className="bg-[#0D6E52]/30 text-emerald-200 border-emerald-400/40">
-                    <FileCheck2 className="h-3 w-3" />
-                    Publikasi Resmi BOSP
-                  </Badge>
-                  <Badge className="bg-[#C9A24D]/15 text-[#F0D792] border-[#C9A24D]/40 font-mono">
-                    NPSN: {school.npsn}
-                  </Badge>
-                  {publishedAt && (
-                    <span className="text-xs text-[#C7BFA9]">
-                      Dipublikasikan: {formatDateId(publishedAt)}
-                    </span>
-                  )}
-                </div>
-
-                <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wide text-[#FAF5EA] flex items-center gap-3">
-                  <Building2 className="h-6 w-6 text-[#D4AF37] shrink-0 hidden md:block" />
-                  {school.name}
-                </h1>
-
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs sm:text-sm text-[#DDD4C1]">
-                  <span className="inline-flex items-start gap-1.5">
-                    <MapPin className="h-4 w-4 shrink-0 text-[#D4AF37] mt-0.5" />
-                    {school.address}
+              <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-y-1.5 gap-x-5 text-xs sm:text-sm text-[#DDD4C1]">
+                <span className="inline-flex items-start gap-1.5 leading-relaxed">
+                  <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[#D4AF37] mt-0.5" />
+                  <span>{school.address}</span>
+                </span>
+                {school.phone && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5 text-[#D4AF37] shrink-0" />
+                    <span>{school.phone}</span>
                   </span>
-                  {school.phone && (
-                    <span className="inline-flex items-center gap-1.5">
-                      <Phone className="h-3.5 w-3.5 text-[#D4AF37]" />
-                      {school.phone}
-                    </span>
-                  )}
-                </div>
+                )}
+              </div>
 
-                <div className="flex flex-wrap gap-2.5 pt-1">
-                  <div className="inline-flex items-center gap-2 rounded-xl bg-white/5 px-3.5 py-1.5 text-xs border border-[#C9A24D]/25 backdrop-blur-xs">
-                    <UserCheck className="h-3.5 w-3.5 text-[#DFBC6F]" />
-                    <span className="text-[#C7BFA9]">Kepala Sekolah:</span>
-                    <span className="font-semibold text-[#FAF5EA]">
-                      {school.headmaster}
-                    </span>
-                  </div>
-                  <div className="inline-flex items-center gap-2 rounded-xl bg-white/5 px-3.5 py-1.5 text-xs border border-[#C9A24D]/25 backdrop-blur-xs">
-                    <UserCheck className="h-3.5 w-3.5 text-[#DFBC6F]" />
-                    <span className="text-[#C7BFA9]">Bendahara BOSP:</span>
-                    <span className="font-semibold text-[#FAF5EA]">
-                      {school.treasurer}
-                    </span>
-                  </div>
+              <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-2 pt-0.5">
+                <div className="inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 sm:py-1.5 text-xs border border-[#C9A24D]/25 backdrop-blur-xs">
+                  <UserCheck className="h-3.5 w-3.5 text-[#DFBC6F] shrink-0" />
+                  <span className="text-[#C7BFA9] shrink-0">Kepala Sekolah:</span>
+                  <span className="font-semibold text-[#FAF5EA] truncate">
+                    {school.headmaster}
+                  </span>
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 sm:py-1.5 text-xs border border-[#C9A24D]/25 backdrop-blur-xs">
+                  <UserCheck className="h-3.5 w-3.5 text-[#DFBC6F] shrink-0" />
+                  <span className="text-[#C7BFA9] shrink-0">Bendahara BOSP:</span>
+                  <span className="font-semibold text-[#FAF5EA] truncate">
+                    {school.treasurer}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Period Filters */}
-            <div className="rounded-2xl bg-[#161B26]/90 backdrop-blur-md border border-[#C9A24D]/35 p-4 sm:p-5 space-y-3 min-w-[280px] lg:min-w-[335px] shadow-[0_12px_32px_-12px_rgba(0,0,0,0.6)] no-print">
+            <div className="w-full lg:w-[335px] shrink-0 rounded-2xl bg-[#161B26]/90 backdrop-blur-md border border-[#C9A24D]/35 p-4 sm:p-5 space-y-3 shadow-[0_12px_32px_-12px_rgba(0,0,0,0.6)] no-print">
               <div className="flex items-center justify-between gap-3">
                 <span className="font-display text-xs font-bold uppercase tracking-widest text-[#E8C97B] flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
@@ -183,7 +191,7 @@ export function PublicHeader({
                     aria-label="Pilih Tahun Anggaran"
                     value={selectedYear}
                     onChange={(e) => updateFilter(Number(e.target.value), null)}
-                    className="rounded-xl border border-[#C9A24D]/45 bg-[#0C0F16] px-3 py-1.5 text-sm font-semibold text-[#F5EAD0] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] cursor-pointer"
+                    className="rounded-xl border border-[#C9A24D]/45 bg-[#0C0F16] px-3 py-1.5 text-xs sm:text-sm font-semibold text-[#F5EAD0] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] cursor-pointer"
                   >
                     {availableYears.map((yr) => (
                       <option key={yr} value={yr}>
@@ -205,7 +213,7 @@ export function PublicHeader({
                         type="button"
                         disabled={!enabled}
                         onClick={() => updateFilter(selectedYear, st)}
-                        className={`rounded-xl px-2.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
+                        className={`rounded-xl px-2 py-2.5 sm:py-2 text-xs font-semibold transition-all cursor-pointer ${
                           active
                             ? "bg-gradient-to-r from-[#B8892E] to-[#DFBC6F] text-[#11141B] shadow-sm font-bold"
                             : enabled

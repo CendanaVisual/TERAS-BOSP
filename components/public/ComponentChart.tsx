@@ -51,18 +51,20 @@ export function ComponentChart({
 
   return (
     <Card className="print-break-inside-avoid">
-      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#EFE6D5] pb-4">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#EFE6D5] p-4 sm:p-6 pb-4">
         <div>
-          <CardTitle>Infografis Realisasi per 12 Komponen Standar BOSP</CardTitle>
-          <CardDescription>
-            Perbandingan anggaran RKAS dan realisasi belanja sesuai Permendikbudristek Juknis BOSP. Klik komponen untuk memfilter tabel.
+          <CardTitle className="text-base sm:text-lg">
+            Infografis Realisasi per 12 Komponen Standar BOSP
+          </CardTitle>
+          <CardDescription className="text-xs sm:text-sm mt-1">
+            Perbandingan anggaran RKAS dan realisasi belanja sesuai Juknis BOSP. Ketuk komponen untuk memfilter rincian.
           </CardDescription>
         </div>
-        <div className="inline-flex rounded-xl border border-[#E1D5BE] bg-[#F5EFE3] p-1 self-start no-print">
+        <div className="grid grid-cols-2 sm:inline-flex w-full sm:w-auto rounded-xl border border-[#E1D5BE] bg-[#F5EFE3] p-1 no-print">
           <button
             type="button"
             onClick={() => setChartMode("bar")}
-            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition cursor-pointer ${
+            className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 sm:py-1.5 text-xs font-semibold transition cursor-pointer ${
               chartMode === "bar"
                 ? "bg-[#141923] text-[#F4E6C3] shadow-xs"
                 : "text-[#5C5446] hover:text-[#141923]"
@@ -74,7 +76,7 @@ export function ComponentChart({
           <button
             type="button"
             onClick={() => setChartMode("pie")}
-            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition cursor-pointer ${
+            className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 sm:py-1.5 text-xs font-semibold transition cursor-pointer ${
               chartMode === "pie"
                 ? "bg-[#141923] text-[#F4E6C3] shadow-xs"
                 : "text-[#5C5446] hover:text-[#141923]"
@@ -86,9 +88,9 @@ export function ComponentChart({
         </div>
       </CardHeader>
 
-      <CardContent className="pt-6 space-y-6">
-        <div className="grid gap-6 lg:grid-cols-12">
-          <div className="lg:col-span-7 min-h-[340px] flex items-center justify-center rounded-2xl border border-[#EAE0CE] bg-[#FAF6EE]/70 p-3">
+      <CardContent className="p-4 sm:p-6 pt-5 space-y-5">
+        <div className="grid gap-5 lg:grid-cols-12">
+          <div className="lg:col-span-7 min-h-[270px] sm:min-h-[340px] flex items-center justify-center rounded-2xl border border-[#EAE0CE] bg-[#FAF6EE]/70 p-2 sm:p-3">
             {!mounted ? (
               <div className="text-sm text-[#8B806D]">Memuat grafik...</div>
             ) : activeItems.length === 0 ? (

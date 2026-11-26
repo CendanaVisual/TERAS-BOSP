@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
-import { detectDatabaseEnvSource, prisma } from "@/lib/prisma";
+import {
+  detectDatabaseEnvSource,
+  listDbRelatedEnvKeyNames,
+  prisma,
+} from "@/lib/prisma";
 
 export async function GET() {
   const dbSource = detectDatabaseEnvSource();
+  const detectedDbRelatedKeys = listDbRelatedEnvKeyNames();
   const envStatus = {
     hasDatabaseUrl: Boolean(dbSource.url),
     databaseEnvKey: dbSource.key,
+    detectedDbRelatedKeys,
     hasAuthSecret: Boolean(
       process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
     ),
@@ -23,7 +29,7 @@ export async function GET() {
         status: "error",
         database: "missing_env",
         message:
-          "DATABASE_URL (atau POSTGRES_URL / POSTGRES_PRISMA_URL) belum diatur pada environment server.",
+          "Variabel koneksi PostgreSQL (DATABASE_URL / POSTGRES_URL) belum terbaca pada deployment ini. Pastikan sudah dicentang untuk Production di Vercel lalu lakukan Redeploy.",
         env: envStatus,
       },
       { status: 500 }

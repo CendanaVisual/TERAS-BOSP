@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 
-const DATABASE_ENV_KEYS = [
+const PRIORITY_ENV_KEYS = [
   "DATABASE_URL",
   "POSTGRES_PRISMA_URL",
   "POSTGRES_URL",
@@ -14,39 +14,82 @@ const globalForPrisma = globalThis as unknown as {
   prismaUrl: string | undefined;
 };
 
+function sanitizePostgresUrl(raw: string): string | undefined {
+  const trimmed = raw.trim();
+  if (!trimmed) return undefined;
+
+  // Handle accidental `psql 'postgresql://...'`, `DATABASE_URL=...`, or surrounding quotes
+  const urlMatch = trimmed.match(/postgres(?:ql)?:\/\/[^\s'"]+/i);
+  const candidate = urlMatch
+    ? urlMatch[0]
+    : trimmed.replace(/^["']|["']$/g, "");
+
+  if (!/^postgres(?:ql)?:\/\//i.test(candidate)) {
+    return undefined;
+  }
+
+  try {
+    const parsed = new URL(candidate);
+    if (parsed.searchParams.has("channel_binding")) {
+      parsed.searchParams.delete("channel_binding");
+    }
+    if (
+      !parsed.searchParams.has("sslmode") &&
+      parsed.hostname.includes("neon.tech")
+    ) {
+      parsed.searchParams.set("sslmode", "require");
+    }
+    return parsed.toString();
+  } catch {
+    return candidate;
+  }
+}
+
+export function listDbRelatedEnvKeyNames(): string[] {
+  return Object.keys(process.env)
+    .filter((k) => /database|postgres|neon|db_url|pg_url/i.test(k))
+    .sort();
+}
+
 export function detectDatabaseEnvSource(): {
   key: string | null;
   url: string | undefined;
 } {
-  for (const key of DATABASE_ENV_KEYS) {
+  // 1. Exact priority keys
+  for (const key of PRIORITY_ENV_KEYS) {
     const raw = process.env[key];
-    if (!raw || !raw.trim()) continue;
-
-    // Handle accidental `psql 'postgresql://...'`, `DATABASE_URL=...`, or surrounding quotes
-    let cleaned = raw.trim();
-    const urlMatch = cleaned.match(/postgres(?:ql)?:\/\/[^\s'"]+/i);
-    if (urlMatch) {
-      cleaned = urlMatch[0];
-    } else {
-      cleaned = cleaned.replace(/^["']|["']$/g, "");
-    }
-
-    try {
-      const parsed = new URL(cleaned);
-      if (parsed.searchParams.has("channel_binding")) {
-        parsed.searchParams.delete("channel_binding");
-      }
-      if (
-        !parsed.searchParams.has("sslmode") &&
-        parsed.hostname.includes("neon.tech")
-      ) {
-        parsed.searchParams.set("sslmode", "require");
-      }
-      return { key, url: parsed.toString() };
-    } catch {
-      return { key, url: cleaned };
-    }
+    if (!raw) continue;
+    const url = sanitizePostgresUrl(raw);
+    if (url) return { key, url };
   }
+
+  // 2. Case-insensitive or prefixed integration keys (e.g. TERAS_DATABASE_URL, STORAGE_POSTGRES_URL)
+  const entries = Object.entries(process.env);
+  const prefixedMatches: Array<{ key: string; url: string; score: number }> = [];
+
+  for (const [key, raw] of entries) {
+    if (!raw) continue;
+    const url = sanitizePostgresUrl(raw);
+    if (!url) continue;
+
+    let score = 0;
+    const upper = key.toUpperCase();
+    if (upper === "DATABASE_URL") score += 100;
+    else if (upper.endsWith("_DATABASE_URL")) score += 80;
+    else if (upper.endsWith("_POSTGRES_PRISMA_URL")) score += 75;
+    else if (upper.endsWith("_POSTGRES_URL")) score += 70;
+    else if (/DATABASE|POSTGRES|NEON/i.test(upper)) score += 50;
+    else score += 20;
+
+    if (url.includes("-pooler.")) score += 15;
+    prefixedMatches.push({ key, url, score });
+  }
+
+  if (prefixedMatches.length > 0) {
+    prefixedMatches.sort((a, b) => b.score - a.score);
+    return { key: prefixedMatches[0].key, url: prefixedMatches[0].url };
+  }
+
   return { key: null, url: undefined };
 }
 
@@ -95,7 +138,7 @@ export function getDatabaseErrorMessage(
       status: 503,
       code: "MISSING_DATABASE_URL",
       message:
-        "Koneksi database belum terpasang di server. Tambahkan Environment Variable DATABASE_URL (Neon PostgreSQL) pada dashboard Vercel lalu Redeploy.",
+        "Koneksi database belum aktif di deployment ini. Pastikan DATABASE_URL tercentang untuk 'Production' di Vercel Settings -> Environment Variables, lalu klik Redeploy.",
     };
   }
 

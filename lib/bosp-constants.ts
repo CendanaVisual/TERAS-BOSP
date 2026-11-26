@@ -31,18 +31,18 @@ export const BOSP_COMPONENT_SHORT_LABELS: Record<BospComponent, string> = {
 };
 
 export const BOSP_COMPONENT_COLORS: Record<BospComponent, string> = {
-  "Penerimaan Peserta Didik Baru (PPDB)": "#1e3a8a",
-  "Pengembangan Perpustakaan": "#1d4ed8",
-  "Pelaksanaan Kegiatan Pembelajaran dan Ekstrakurikuler": "#0f766e",
-  "Pelaksanaan Kegiatan Asesmen dan Evaluasi Pembelajaran": "#0369a1",
-  "Pelaksanaan Administrasi Kegiatan Sekolah": "#4338ca",
-  "Pengembangan Profesi Guru dan Tenaga Kependidikan": "#0d9488",
-  "Pembiayaan Langganan Daya dan Jasa": "#0284c7",
-  "Pemeliharaan Sarana dan Prasarana Sekolah": "#15803d",
-  "Penyediaan Alat Multimedia Pembelajaran": "#2563eb",
-  "Penyelenggaraan Kegiatan Peningkatan Kompetensi Keahlian": "#64748b",
-  "Penyelenggaraan Kegiatan dalam Mendukung Keterserapan Lulusan": "#475569",
-  "Pembayaran Honor": "#059669",
+  "Penerimaan Peserta Didik Baru (PPDB)": "#1E3A5F",
+  "Pengembangan Perpustakaan": "#B8862D",
+  "Pelaksanaan Kegiatan Pembelajaran dan Ekstrakurikuler": "#0D6E52",
+  "Pelaksanaan Kegiatan Asesmen dan Evaluasi Pembelajaran": "#2B5B84",
+  "Pelaksanaan Administrasi Kegiatan Sekolah": "#6D4C2F",
+  "Pengembangan Profesi Guru dan Tenaga Kependidikan": "#15803D",
+  "Pembiayaan Langganan Daya dan Jasa": "#0369A1",
+  "Pemeliharaan Sarana dan Prasarana Sekolah": "#9A6B21",
+  "Penyediaan Alat Multimedia Pembelajaran": "#334155",
+  "Penyelenggaraan Kegiatan Peningkatan Kompetensi Keahlian": "#78716C",
+  "Penyelenggaraan Kegiatan dalam Mendukung Keterserapan Lulusan": "#57534E",
+  "Pembayaran Honor": "#0F766E",
 };
 
 export const BUDGET_STAGE_LABELS = {

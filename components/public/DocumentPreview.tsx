@@ -27,7 +27,7 @@ export function DocumentPreview({ period }: { period: SerializedBudgetPeriod }) 
 
   return (
     <Card className="no-print">
-      <CardHeader className="border-b border-slate-100 pb-4">
+      <CardHeader className="border-b border-[#EFE6D5] pb-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">

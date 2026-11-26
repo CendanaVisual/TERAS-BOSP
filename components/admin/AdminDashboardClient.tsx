@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -9,7 +10,6 @@ import {
   FileCheck2,
   Inbox,
   LogOut,
-  ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import type { AdminSessionPayload } from "@/lib/auth-token";
@@ -101,26 +101,35 @@ export function AdminDashboardClient({
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      {/* Top Admin Header */}
-      <header className="border-b border-slate-200 bg-[#0F2A56] text-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 border border-white/20">
-              <ShieldCheck className="h-5 w-5 text-emerald-300" />
+    <div className="min-h-screen flex flex-col">
+      {/* Top Admin Header — Obsidian & Balinese Gold */}
+      <header className="relative overflow-hidden border-b border-[#C9A24D]/30 bali-obsidian-hero text-white">
+        <div className="pointer-events-none absolute inset-0 bali-patra-overlay opacity-70" />
+        <div className="relative mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3.5">
+            <div className="relative h-11 w-11 shrink-0 rounded-full p-0.5 bg-gradient-to-b from-[#DFBC6F]/70 to-[#8A6820]/30 shadow-[0_0_16px_rgba(212,175,55,0.3)]">
+              <div className="relative h-full w-full rounded-full overflow-hidden bg-[#10141C]">
+                <Image
+                  src="/logo.gif"
+                  alt="Logo TERAS-BOSP"
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
+              </div>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-extrabold tracking-tight">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="font-display text-base sm:text-lg font-bold tracking-wide text-[#F4E6C3]">
                   Dashboard Admin TERAS-BOSP
                 </h1>
-                <Badge className="bg-emerald-500/20 text-emerald-100 border-emerald-400/30">
+                <Badge className="bg-[#0D6E52]/35 text-emerald-200 border-emerald-400/40">
                   {publishedCount} Laporan Tayang
                 </Badge>
               </div>
-              <p className="text-xs text-blue-200">
+              <p className="text-xs text-[#C7BFA9]">
                 {profile.name} (NPSN: {profile.npsn}) • Masuk sebagai{" "}
-                <strong className="text-white">{session.name}</strong>
+                <strong className="text-[#FAF5EA]">{session.email}</strong>
               </p>
             </div>
           </div>
@@ -131,7 +140,7 @@ export function AdminDashboardClient({
                 type="button"
                 variant="outline"
                 size="sm"
-                className="border-white/25 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                className="border-[#C9A24D]/40 bg-white/10 text-[#F4E6C3] hover:bg-white/20 hover:text-white"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Portal Publik
@@ -139,7 +148,7 @@ export function AdminDashboardClient({
             </Link>
             <Button
               type="button"
-              variant="secondary"
+              variant="gold"
               size="sm"
               onClick={handleLogout}
             >
@@ -150,7 +159,7 @@ export function AdminDashboardClient({
         </div>
 
         {/* Navigation Tabs */}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex gap-1 overflow-x-auto pb-0 pt-1">
             {navItems.map((tab) => {
               const active = activeTab === tab.id;
@@ -161,8 +170,8 @@ export function AdminDashboardClient({
                   onClick={() => setActiveTab(tab.id)}
                   className={`inline-flex items-center gap-2 whitespace-nowrap rounded-t-xl px-4 py-2.5 text-sm font-semibold transition-all cursor-pointer ${
                     active
-                      ? "bg-slate-50 text-[#0F2A56]"
-                      : "text-blue-100/80 hover:bg-white/10 hover:text-white"
+                      ? "bg-[#F6F1E7] text-[#141923] shadow-xs"
+                      : "text-[#D7CEBE] hover:bg-white/10 hover:text-[#FAF5EA]"
                   }`}
                 >
                   {tab.icon}
@@ -171,9 +180,9 @@ export function AdminDashboardClient({
                     <span
                       className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
                         tab.id === "feedback" && unreadCount > 0
-                          ? "bg-amber-400 text-slate-900"
+                          ? "bg-[#DFBC6F] text-[#11141B]"
                           : active
-                          ? "bg-[#0F2A56]/10 text-[#0F2A56]"
+                          ? "bg-[#141923]/10 text-[#141923]"
                           : "bg-white/15 text-white"
                       }`}
                     >

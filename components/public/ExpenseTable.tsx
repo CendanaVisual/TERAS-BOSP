@@ -96,7 +96,7 @@ export function ExpenseTable({
 
   return (
     <Card id="rincian-belanja">
-      <CardHeader className="border-b border-slate-100 pb-4">
+      <CardHeader className="border-b border-[#EFE6D5] pb-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle>Tabel Rincian Realisasi Belanja</CardTitle>
@@ -165,7 +165,7 @@ export function ExpenseTable({
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wide text-slate-600">
+            <thead className="bg-[#F6EFE2] border-b border-[#E5DAC5] text-xs uppercase tracking-wider text-[#4E4639]">
               <tr>
                 <th className="px-4 py-3 font-semibold whitespace-nowrap">
                   <button
@@ -299,7 +299,7 @@ export function ExpenseTable({
               )}
             </tbody>
             {filteredAndSorted.length > 0 && (
-              <tfoot className="bg-[#0F2A56]/5 border-t-2 border-slate-200 font-bold text-[#0F2A56]">
+              <tfoot className="bg-[#FAF2E3] border-t-2 border-[#D9C7A3] font-bold text-[#141923]">
                 <tr>
                   <td colSpan={4} className="px-4 py-3.5 text-sm">
                     Total ({filteredAndSorted.length} item ditampilkan)
@@ -307,7 +307,7 @@ export function ExpenseTable({
                   <td className="px-4 py-3.5 text-right font-mono text-sm tabular-nums whitespace-nowrap">
                     {formatRupiah(totals.planned)}
                   </td>
-                  <td className="px-4 py-3.5 text-right font-mono text-sm text-emerald-700 tabular-nums whitespace-nowrap">
+                  <td className="px-4 py-3.5 text-right font-mono text-sm text-[#0D6E52] tabular-nums whitespace-nowrap">
                     {formatRupiah(totals.realized)}
                   </td>
                   <td className="px-4 py-3.5 text-right font-mono text-sm tabular-nums whitespace-nowrap">

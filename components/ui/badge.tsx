@@ -7,11 +7,11 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-transparent bg-[#0F2A56] text-white",
-        navy: "border-blue-200 bg-blue-50 text-[#0F2A56]",
-        emerald: "border-emerald-200 bg-emerald-50 text-emerald-700",
-        amber: "border-amber-200 bg-amber-50 text-amber-800",
-        slate: "border-slate-200 bg-slate-100 text-slate-700",
+        default: "border-[#C9A24D]/40 bg-[#141923] text-[#F4E6C3]",
+        navy: "border-[#C9A24D]/45 bg-[#F8F1E1] text-[#6B4F14]",
+        emerald: "border-emerald-300/70 bg-emerald-50 text-[#0D6E52]",
+        amber: "border-amber-300/80 bg-amber-50 text-amber-900",
+        slate: "border-[#DDD2BE] bg-[#F2ECE0] text-[#454139]",
         destructive: "border-red-200 bg-red-50 text-red-700",
       },
     },

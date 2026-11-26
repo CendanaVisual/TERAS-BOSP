@@ -181,15 +181,16 @@ export async function getPublicPortalData(filters?: {
 }) {
   const defaultProfile: SerializedSchoolProfile = {
     id: "default",
-    name: "TERAS-BOSP Portal Sekolah",
-    npsn: "-",
-    address: "Alamat sekolah belum diatur",
-    headmaster: "-",
-    treasurer: "-",
-    phone: "",
-    email: "",
-    district: "",
-    province: "",
+    name: "SD Negeri 7 Pedungan",
+    npsn: "50103107",
+    address:
+      "Jl. Raya Sesetan No. 285, Kel. Pedungan, Kec. Denpasar Selatan, Kota Denpasar, Bali 80222",
+    headmaster: "Ni Luh Putu Sariani, S.Pd., M.Pd.",
+    treasurer: "I Made Adi Wirawan, S.Pd.",
+    phone: "(0361) 720418",
+    email: "sdn7pedungan63@gmail.com",
+    district: "Kec. Denpasar Selatan, Kota Denpasar",
+    province: "Provinsi Bali",
     updatedAt: new Date().toISOString(),
   };
 

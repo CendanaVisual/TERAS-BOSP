@@ -10,8 +10,14 @@ async function main() {
   console.log("Memulai seeding database TERAS-BOSP...");
 
   // 1. Admin User (idempotent upsert)
-  const adminEmail = "admin@teras-bosp.sch.id";
-  const adminPasswordHash = await bcrypt.hash("TerasBosp2026!", 10);
+  const adminEmail = "sdn7pedungan63@gmail.com";
+  const adminPasswordHash = await bcrypt.hash("terasbosp63", 10);
+
+  await prisma.user.deleteMany({
+    where: {
+      email: "admin@teras-bosp.sch.id",
+    },
+  });
 
   await prisma.user.upsert({
     where: { email: adminEmail },

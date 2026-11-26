@@ -9,7 +9,7 @@ export const Input = React.forwardRef<
     <input
       type={type}
       className={cn(
-        "flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#0F2A56] focus:outline-none focus:ring-2 focus:ring-[#0F2A56]/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60",
+        "flex h-10 w-full rounded-xl border border-[#DDD1BC] bg-white px-3.5 py-2 text-sm text-[#1B1F2A] placeholder:text-[#8E8677] focus:border-[#B8862D] focus:outline-none focus:ring-2 focus:ring-[#C9A24D]/25 disabled:cursor-not-allowed disabled:bg-[#F5F0E6] disabled:opacity-60",
         className
       )}
       ref={ref}
@@ -26,7 +26,7 @@ export const Textarea = React.forwardRef<
   return (
     <textarea
       className={cn(
-        "flex min-h-[100px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#0F2A56] focus:outline-none focus:ring-2 focus:ring-[#0F2A56]/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60",
+        "flex min-h-[100px] w-full rounded-xl border border-[#DDD1BC] bg-white px-3.5 py-2 text-sm text-[#1B1F2A] placeholder:text-[#8E8677] focus:border-[#B8862D] focus:outline-none focus:ring-2 focus:ring-[#C9A24D]/25 disabled:cursor-not-allowed disabled:bg-[#F5F0E6] disabled:opacity-60",
         className
       )}
       ref={ref}
@@ -43,7 +43,7 @@ export const Select = React.forwardRef<
   return (
     <select
       className={cn(
-        "flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-[#0F2A56] focus:outline-none focus:ring-2 focus:ring-[#0F2A56]/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60",
+        "flex h-10 w-full rounded-xl border border-[#DDD1BC] bg-white px-3.5 py-2 text-sm text-[#1B1F2A] focus:border-[#B8862D] focus:outline-none focus:ring-2 focus:ring-[#C9A24D]/25 disabled:cursor-not-allowed disabled:bg-[#F5F0E6] disabled:opacity-60",
         className
       )}
       ref={ref}
@@ -62,7 +62,7 @@ export function Label({
   return (
     <label
       className={cn(
-        "text-xs font-semibold uppercase tracking-wide text-slate-600",
+        "text-xs font-semibold uppercase tracking-wider text-[#5A5347]",
         className
       )}
       {...props}

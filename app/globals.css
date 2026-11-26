@@ -1,23 +1,68 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --navy: #0f2a56;
-  --navy-light: #1e3a8a;
-  --emerald: #059669;
+  --background: #f6f1e7;
+  --foreground: #1b1f2a;
+  --obsidian: #10141c;
+  --ebony: #1a202c;
+  --gold: #c9a24d;
+  --gold-dark: #9e7828;
+  --emerald: #0d6e52;
+  --sandstone: #e6dcc8;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
   --font-mono: var(--font-mono);
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+/* Warm Balinese Limestone & Sandstone Architectural Canvas */
+.bali-canvas-bg {
+  background-color: #f6f1e7;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(201, 162, 77, 0.13) 0%, transparent 42%),
+    radial-gradient(circle at 88% 18%, rgba(16, 20, 28, 0.05) 0%, transparent 38%),
+    radial-gradient(circle at 50% 95%, rgba(13, 110, 82, 0.06) 0%, transparent 48%),
+    url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23b89242' stroke-opacity='0.065' stroke-width='1'%3E%3Cpath d='M36 4L44 20L60 12L52 28L68 36L52 44L60 60L44 52L36 68L28 52L12 60L20 44L4 36L20 28L12 12L28 20Z'/%3E%3Ccircle cx='36' cy='36' r='6'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Deep Obsidian & Carved Balinese Gold Hero Backdrop */
+.bali-obsidian-hero {
+  background-color: #0e1219;
+  background-image:
+    radial-gradient(circle at 18% 25%, rgba(212, 175, 55, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 86% 75%, rgba(13, 110, 82, 0.16) 0%, transparent 45%),
+    linear-gradient(135deg, #0b0e14 0%, #151b26 52%, #1d232f 100%);
+}
+
+/* Subtle Balinese Patra Ornament Overlay for Dark Hero */
+.bali-patra-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg width='96' height='96' viewBox='0 0 96 96' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23d4af37' stroke-opacity='0.08' stroke-width='1'%3E%3Cpath d='M48 6C56 20 76 20 90 48C76 76 56 76 48 90C40 76 20 76 6 48C20 20 40 20 48 6Z'/%3E%3Cpath d='M48 22L60 36L74 48L60 60L48 74L36 60L22 48L36 36Z'/%3E%3Ccircle cx='48' cy='48' r='5'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Balinese Gold Hairline Divider */
+.bali-gold-divider {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201, 162, 77, 0.45) 20%,
+    rgba(230, 198, 122, 0.9) 50%,
+    rgba(201, 162, 77, 0.45) 80%,
+    transparent 100%
+  );
 }
 
 .tabular-nums {
@@ -28,8 +73,10 @@ body {
   .no-print {
     display: none !important;
   }
-  body {
+  body,
+  .bali-canvas-bg {
     background: #ffffff !important;
+    background-image: none !important;
     color: #000000 !important;
   }
   .print-break-inside-avoid {

@@ -60,14 +60,14 @@ export function FeedbackForm() {
   };
 
   return (
-    <Card className="no-print border-slate-200">
-      <CardHeader className="border-b border-slate-100 pb-4">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-[#0F2A56]">
+    <Card className="no-print border-[#E5DAC5]">
+      <CardHeader className="border-b border-[#EFE6D5] pb-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#C9A24D]/40 bg-[#141923] text-[#E6C67A]">
             <MessageSquarePlus className="h-5 w-5" />
           </div>
           <div>
-            <CardTitle>Kanal Pengaduan & Umpan Balik Masyarakat</CardTitle>
+            <CardTitle>Kanal Pengaduan &amp; Umpan Balik Masyarakat</CardTitle>
             <CardDescription>
               Orang tua murid, komite sekolah, dan masyarakat dapat menyampaikan pertanyaan, saran, atau pengaduan terkait pengelolaan dana BOSP.
             </CardDescription>

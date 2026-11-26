@@ -227,12 +227,12 @@ export function SmartUploadExtractor({ onSaved }: SmartUploadExtractorProps) {
     <div className="space-y-6">
       {/* Upload Dropzone Card */}
       <Card>
-        <CardHeader className="border-b border-slate-100 pb-4">
+        <CardHeader className="border-b border-[#EFE6D5] pb-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-blue-600" />
-                AI Smart Upload & Extractor (ARKAS / BOSP Salur)
+                <Sparkles className="h-5 w-5 text-[#B8862D]" />
+                AI Smart Upload &amp; Extractor (ARKAS / BOSP Salur)
               </CardTitle>
               <CardDescription>
                 Seret dan lepas file laporan Excel (.xlsx/.xls) atau PDF (.pdf) dari ARKAS. AI akan mengekstrak angka dan memetakan rincian ke 12 Komponen Standar BOSP.
@@ -272,8 +272,8 @@ export function SmartUploadExtractor({ onSaved }: SmartUploadExtractorProps) {
             onClick={() => !extracting && fileInputRef.current?.click()}
             className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 sm:p-10 text-center transition-all cursor-pointer ${
               dragging
-                ? "border-[#0F2A56] bg-blue-50/70"
-                : "border-slate-300 bg-slate-50/60 hover:border-[#0F2A56]/60 hover:bg-slate-50"
+                ? "border-[#B8862D] bg-[#FAF1DE]"
+                : "border-[#D9CBB2] bg-[#FAF6EE]/70 hover:border-[#B8862D] hover:bg-[#FAF5EB]"
             }`}
           >
             <input

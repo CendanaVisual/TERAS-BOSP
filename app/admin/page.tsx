@@ -42,22 +42,22 @@ async function AdminDashboardContent() {
   } catch (error) {
     console.error("Failed to load admin dashboard data:", error);
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-        <Card className="max-w-lg w-full border-amber-200 bg-amber-50/70">
+      <div className="min-h-screen flex items-center justify-center bali-canvas-bg px-4">
+        <Card className="max-w-lg w-full border-[#DECFA8] bg-[#FFFDF9]">
           <CardContent className="py-10 text-center space-y-3">
-            <AlertTriangle className="mx-auto h-9 w-9 text-amber-600" />
-            <h1 className="text-lg font-bold text-[#0F2A56]">
-              Database Admin Belum Terhubung
+            <AlertTriangle className="mx-auto h-9 w-9 text-[#B8862D]" />
+            <h1 className="font-display text-lg font-bold text-[#141923]">
+              Layanan Database Admin Sedang Dipulihkan
             </h1>
-            <p className="text-sm text-slate-600">
-              Gagal mengambil data dari PostgreSQL Neon. Periksa variabel{" "}
-              <code className="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-mono">
+            <p className="text-sm text-[#5A5347]">
+              Gagal terhubung ke PostgreSQL Neon. Pastikan variabel{" "}
+              <code className="rounded bg-[#F5EDE0] px-1.5 py-0.5 text-xs font-mono">
                 DATABASE_URL
               </code>{" "}
-              pada Vercel Environment Variables atau cek{" "}
+              pada Vercel Environment Variables sudah benar atau periksa{" "}
               <a
                 href="/api/health"
-                className="underline font-semibold text-[#0F2A56]"
+                className="underline font-semibold text-[#141923]"
               >
                 /api/health
               </a>

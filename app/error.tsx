@@ -28,18 +28,18 @@ export default function AppError({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
-      <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm space-y-5 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 border border-amber-200">
+    <div className="min-h-screen flex items-center justify-center bali-canvas-bg px-4 py-12">
+      <div className="w-full max-w-lg rounded-2xl border border-[#DFD1B4] bg-[#FFFDF9] p-6 sm:p-8 shadow-md space-y-5 text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#141923] text-[#DFBC6F] border border-[#C9A24D]/40">
           <AlertTriangle className="h-7 w-7" />
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-xl font-extrabold text-[#0F2A56]">
+          <h1 className="font-display text-xl font-bold text-[#141923]">
             Halaman Belum Dapat Dimuat
           </h1>
-          <p className="text-sm text-slate-600">
-            Terjadi gangguan sementara pada server saat memproses data transparansi BOSP. Silakan coba muat ulang halaman atau periksa konfigurasi koneksi database.
+          <p className="text-sm text-[#5A5347]">
+            Terjadi gangguan sementara pada server saat memproses data transparansi BOSP. Silakan coba muat ulang halaman.
           </p>
         </div>
 

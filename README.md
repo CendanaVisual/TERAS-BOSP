@@ -105,8 +105,8 @@ Salin `.env.example` menjadi `.env` untuk pengembangan lokal, dan pastikan selur
    Buka `http://localhost:3000` untuk **Portal Publik** dan `http://localhost:3000/admin` untuk **Portal Admin**.
 
 ### Akun Admin Default (Hasil Seed)
-- **Email:** `admin@teras-bosp.sch.id`
-- **Password:** `TerasBosp2026!`
+- **Email:** `sdn7pedungan63@gmail.com`
+- **Password:** `terasbosp63`
 *(Segera ubah password / buat akun baru setelah deploy produksi).*
 
 ---

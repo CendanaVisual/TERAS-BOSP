@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Building2,
@@ -9,7 +10,6 @@ import {
   MapPin,
   Phone,
   Printer,
-  ShieldCheck,
   UserCheck,
 } from "lucide-react";
 import {
@@ -48,19 +48,25 @@ export function PublicHeader({
   };
 
   return (
-    <header className="bg-white border-b border-slate-200">
-      {/* Top Bar */}
-      <div className="border-b border-slate-100 bg-slate-50/80 no-print">
+    <header className="relative">
+      {/* Top Balinese Luxury Architectural Nav */}
+      <div className="border-b border-[#C9A24D]/25 bg-[#0D1017]/95 backdrop-blur-md text-white no-print">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0F2A56] text-white shadow-xs">
-              <ShieldCheck className="h-4 w-4" />
+          <div className="flex items-center gap-3">
+            <div className="relative h-9 w-9 shrink-0 rounded-full ring-1 ring-[#C9A24D]/50 shadow-[0_0_14px_rgba(201,162,77,0.3)] overflow-hidden bg-[#12161F]">
+              <Image
+                src="/logo.gif"
+                alt="Logo TERAS-BOSP"
+                fill
+                unoptimized
+                className="object-cover"
+              />
             </div>
             <div>
-              <span className="text-sm font-extrabold tracking-tight text-[#0F2A56]">
+              <span className="font-display text-sm sm:text-base font-bold tracking-wider text-[#E8C97B]">
                 TERAS-BOSP
               </span>
-              <span className="hidden sm:inline text-xs text-slate-500 ml-2">
+              <span className="hidden md:inline text-xs text-[#C7BFA9] ml-2.5 border-l border-[#C9A24D]/30 pl-2.5">
                 Transparansi Elektronik Realisasi Anggaran Sekolah
               </span>
             </div>
@@ -72,14 +78,14 @@ export function PublicHeader({
               variant="outline"
               size="sm"
               onClick={() => window.print()}
-              className="hidden sm:inline-flex"
+              className="hidden sm:inline-flex border-[#C9A24D]/35 bg-[#171C26] text-[#F2E9D5] hover:bg-[#222938] hover:text-white"
             >
-              <Printer className="h-3.5 w-3.5" />
+              <Printer className="h-3.5 w-3.5 text-[#D4AF37]" />
               Cetak Laporan
             </Button>
             <Button
               type="button"
-              variant="secondary"
+              variant="gold"
               size="sm"
               onClick={() => router.push("/admin")}
             >
@@ -90,67 +96,85 @@ export function PublicHeader({
         </div>
       </div>
 
-      {/* Hero School Identity & Period Filters */}
-      <div className="bg-gradient-to-br from-[#0F2A56] via-[#133368] to-[#1A4384] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            {/* School Identity */}
-            <div className="space-y-3 max-w-3xl">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge className="bg-emerald-500/20 text-emerald-100 border-emerald-400/30">
-                  <FileCheck2 className="h-3 w-3" />
-                  Publikasi Resmi BOSP
-                </Badge>
-                <Badge className="bg-white/10 text-blue-100 border-white/20 font-mono">
-                  NPSN: {school.npsn}
-                </Badge>
-                {publishedAt && (
-                  <span className="text-xs text-blue-200">
-                    Dipublikasikan: {formatDateId(publishedAt)}
-                  </span>
-                )}
-              </div>
+      {/* Hero School Identity & Period Filters — Modern Balinese Obsidian & Gold */}
+      <div className="relative overflow-hidden bali-obsidian-hero text-white">
+        <div className="pointer-events-none absolute inset-0 bali-patra-overlay opacity-80" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 bali-gold-divider" />
 
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
-                <Building2 className="h-7 w-7 text-blue-200 shrink-0 hidden sm:block" />
-                {school.name}
-              </h1>
-
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs sm:text-sm text-blue-100/90">
-                <span className="inline-flex items-start gap-1.5">
-                  <MapPin className="h-4 w-4 shrink-0 text-blue-300 mt-0.5" />
-                  {school.address}
-                </span>
-                {school.phone && (
-                  <span className="inline-flex items-center gap-1.5">
-                    <Phone className="h-3.5 w-3.5 text-blue-300" />
-                    {school.phone}
-                  </span>
-                )}
-              </div>
-
-              <div className="flex flex-wrap gap-3 pt-1">
-                <div className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 text-xs border border-white/15">
-                  <UserCheck className="h-3.5 w-3.5 text-emerald-300" />
-                  <span className="text-blue-200">Kepala Sekolah:</span>
-                  <span className="font-semibold text-white">
-                    {school.headmaster}
-                  </span>
+        <div className="relative mx-auto max-w-7xl px-4 py-8 sm:py-10 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+            {/* School Identity with Balinese Medallion Logo */}
+            <div className="flex flex-col sm:flex-row sm:items-start gap-5 max-w-3xl">
+              <div className="relative h-20 w-20 sm:h-24 sm:w-24 shrink-0 rounded-full p-1 bg-gradient-to-b from-[#DFBC6F]/60 to-[#8A6820]/30 shadow-[0_0_32px_rgba(212,175,55,0.28)]">
+                <div className="relative h-full w-full rounded-full overflow-hidden bg-[#10141C]">
+                  <Image
+                    src="/logo.gif"
+                    alt={`Logo Resmi ${school.name}`}
+                    fill
+                    unoptimized
+                    priority
+                    className="object-cover"
+                  />
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 text-xs border border-white/15">
-                  <UserCheck className="h-3.5 w-3.5 text-emerald-300" />
-                  <span className="text-blue-200">Bendahara BOSP:</span>
-                  <span className="font-semibold text-white">
-                    {school.treasurer}
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge className="bg-[#0D6E52]/30 text-emerald-200 border-emerald-400/40">
+                    <FileCheck2 className="h-3 w-3" />
+                    Publikasi Resmi BOSP
+                  </Badge>
+                  <Badge className="bg-[#C9A24D]/15 text-[#F0D792] border-[#C9A24D]/40 font-mono">
+                    NPSN: {school.npsn}
+                  </Badge>
+                  {publishedAt && (
+                    <span className="text-xs text-[#C7BFA9]">
+                      Dipublikasikan: {formatDateId(publishedAt)}
+                    </span>
+                  )}
+                </div>
+
+                <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wide text-[#FAF5EA] flex items-center gap-3">
+                  <Building2 className="h-6 w-6 text-[#D4AF37] shrink-0 hidden md:block" />
+                  {school.name}
+                </h1>
+
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs sm:text-sm text-[#DDD4C1]">
+                  <span className="inline-flex items-start gap-1.5">
+                    <MapPin className="h-4 w-4 shrink-0 text-[#D4AF37] mt-0.5" />
+                    {school.address}
                   </span>
+                  {school.phone && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Phone className="h-3.5 w-3.5 text-[#D4AF37]" />
+                      {school.phone}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2.5 pt-1">
+                  <div className="inline-flex items-center gap-2 rounded-xl bg-white/5 px-3.5 py-1.5 text-xs border border-[#C9A24D]/25 backdrop-blur-xs">
+                    <UserCheck className="h-3.5 w-3.5 text-[#DFBC6F]" />
+                    <span className="text-[#C7BFA9]">Kepala Sekolah:</span>
+                    <span className="font-semibold text-[#FAF5EA]">
+                      {school.headmaster}
+                    </span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 rounded-xl bg-white/5 px-3.5 py-1.5 text-xs border border-[#C9A24D]/25 backdrop-blur-xs">
+                    <UserCheck className="h-3.5 w-3.5 text-[#DFBC6F]" />
+                    <span className="text-[#C7BFA9]">Bendahara BOSP:</span>
+                    <span className="font-semibold text-[#FAF5EA]">
+                      {school.treasurer}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Period Filters */}
-            <div className="rounded-xl bg-white/10 backdrop-blur-xs border border-white/20 p-4 space-y-3 min-w-[280px] lg:min-w-[330px] no-print">
+            <div className="rounded-2xl bg-[#161B26]/90 backdrop-blur-md border border-[#C9A24D]/35 p-4 sm:p-5 space-y-3 min-w-[280px] lg:min-w-[335px] shadow-[0_12px_32px_-12px_rgba(0,0,0,0.6)] no-print">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-xs font-semibold uppercase tracking-wider text-blue-100 flex items-center gap-1.5">
+                <span className="font-display text-xs font-bold uppercase tracking-widest text-[#E8C97B] flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
                   Periode Laporan
                 </span>
@@ -159,7 +183,7 @@ export function PublicHeader({
                     aria-label="Pilih Tahun Anggaran"
                     value={selectedYear}
                     onChange={(e) => updateFilter(Number(e.target.value), null)}
-                    className="rounded-lg border border-white/25 bg-[#0B2044] px-3 py-1.5 text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer"
+                    className="rounded-xl border border-[#C9A24D]/45 bg-[#0C0F16] px-3 py-1.5 text-sm font-semibold text-[#F5EAD0] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] cursor-pointer"
                   >
                     {availableYears.map((yr) => (
                       <option key={yr} value={yr}>
@@ -181,12 +205,12 @@ export function PublicHeader({
                         type="button"
                         disabled={!enabled}
                         onClick={() => updateFilter(selectedYear, st)}
-                        className={`rounded-lg px-2.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
+                        className={`rounded-xl px-2.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
                           active
-                            ? "bg-emerald-500 text-white shadow-sm"
+                            ? "bg-gradient-to-r from-[#B8892E] to-[#DFBC6F] text-[#11141B] shadow-sm font-bold"
                             : enabled
-                            ? "bg-white/10 text-blue-100 hover:bg-white/20"
-                            : "bg-white/5 text-blue-200/40 cursor-not-allowed"
+                            ? "bg-white/5 text-[#E5DEC9] border border-white/10 hover:bg-white/15 hover:border-[#C9A24D]/40"
+                            : "bg-white/5 text-white/25 cursor-not-allowed"
                         }`}
                       >
                         {BUDGET_STAGE_SHORT_LABELS[st]}
@@ -195,14 +219,17 @@ export function PublicHeader({
                   })}
                 </div>
               ) : (
-                <p className="text-xs text-blue-100/80">
-                  Belum ada laporan dipublikasikan.
+                <p className="text-xs text-[#C7BFA9]">
+                  Belum ada laporan periode yang ditayangkan.
                 </p>
               )}
 
               {selectedStage && (
-                <p className="text-[11px] text-blue-100/80">
-                  Menampilkan: <strong>{BUDGET_STAGE_LABELS[selectedStage]}</strong>
+                <p className="text-[11px] text-[#C7BFA9]">
+                  Menampilkan:{" "}
+                  <strong className="text-[#F5EAD0]">
+                    {BUDGET_STAGE_LABELS[selectedStage]}
+                  </strong>
                 </p>
               )}
             </div>

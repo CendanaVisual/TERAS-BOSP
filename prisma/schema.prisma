@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BudgetStage {
+  TAHAP_1
+  TAHAP_2
+  TAHUNAN
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum FundSource {
+  BOSP_REGULER
+  BOSP_KINERJA
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+}
+
+model SchoolProfile {
+  id         String   @id @default(cuid())
+  name       String
+  npsn       String
+  address    String
+  headmaster String
+  treasurer  String
+  phone      String   @default("")
+  email      String   @default("")
+  district   String   @default("")
+  province   String   @default("")
+  updatedAt  DateTime @updatedAt
+}
+
+model BudgetPeriod {
+  id                  String        @id @default(cuid())
+  fiscalYear          Int
+  stage               BudgetStage
+  openingBalance      Decimal       @db.Decimal(18, 2)
+  totalReceived       Decimal       @db.Decimal(18, 2)
+  regularReceived     Decimal       @default(0) @db.Decimal(18, 2)
+  performanceReceived Decimal       @default(0) @db.Decimal(18, 2)
+  totalSpent          Decimal       @db.Decimal(18, 2)
+  endingBalance       Decimal       @db.Decimal(18, 2)
+  documentUrl         String?
+  documentName        String?
+  documentMimeType    String?
+  status              PublishStatus @default(DRAFT)
+  publishedAt         DateTime?
+  notes               String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  expenses            ExpenseItem[]
+
+  @@index([fiscalYear, stage, status])
+}
+
+model ExpenseItem {
+  id                String       @id @default(cuid())
+  budgetPeriodId    String
+  budgetPeriod      BudgetPeriod @relation(fields: [budgetPeriodId], references: [id], onDelete: Cascade)
+  componentCategory String
+  accountCode       String
+  description       String
+  fundSource        FundSource   @default(BOSP_REGULER)
+  plannedAmount     Decimal      @db.Decimal(18, 2)
+  realizedAmount    Decimal      @db.Decimal(18, 2)
+  createdAt         DateTime     @default(now())
+
+  @@index([budgetPeriodId])
+  @@index([componentCategory])
+}
+
+model PublicFeedback {
+  id         String   @id @default(cuid())
+  senderName String
+  senderRole String
+  contact    String
+  message    String
+  isRead     Boolean  @default(false)
+  adminNote  String?
+  createdAt  DateTime @default(now())
+
+  @@index([isRead, createdAt])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         UserRole @default(ADMIN)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

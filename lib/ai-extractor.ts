@@ -443,7 +443,10 @@ Isi Teks / Tabel Dokumen:
 ${doc.extractedText || "(Teks PDF kosong atau berupa pindaian gambar, baca langsung dari lampiran PDF)."}`;
 
   if (provider === "gemini") {
-    const ai = new GoogleGenAI({ apiKey });
+    const isEnterpriseExpress = apiKey.startsWith("AQ.");
+    const ai = new GoogleGenAI(
+      isEnterpriseExpress ? { enterprise: true, apiKey } : { apiKey }
+    );
     const parts: Array<
       | { text: string }
       | { inlineData: { mimeType: string; data: string } }
@@ -458,24 +461,35 @@ ${doc.extractedText || "(Teks PDF kosong atau berupa pindaian gambar, baca langs
       });
     }
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [{ role: "user", parts }],
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        temperature: 0.1,
-        responseMimeType: "application/json",
-        responseSchema: GEMINI_RESPONSE_SCHEMA,
-      },
-    });
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [{ role: "user", parts }],
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          temperature: 0.1,
+          responseMimeType: "application/json",
+          responseSchema: GEMINI_RESPONSE_SCHEMA,
+        },
+      });
 
-    const jsonText = response.text;
-    if (!jsonText) {
-      throw new Error("Gemini API mengembalikan respons kosong.");
+      const jsonText = response.text;
+      if (!jsonText) {
+        throw new Error("Gemini API mengembalikan respons kosong.");
+      }
+      const parsedJson = JSON.parse(jsonText);
+      const validated = extractedPeriodSchema.parse(parsedJson);
+      return finalizeExtractedPayload(validated, "ai-gemini");
+    } catch (aiError) {
+      console.error("Gemini AI extraction failed, using heuristic fallback:", aiError);
+      const fallback = extractWithHeuristicFallback(doc);
+      const errDetail =
+        aiError instanceof Error ? aiError.message.slice(0, 140) : "Gangguan API AI";
+      return {
+        ...fallback,
+        warning: `Ekstraksi AI Gemini gagal (${errDetail}). Data tetap diekstrak memakai parser tabel lokal agar Anda tetap dapat memverifikasi dan mempublikasikan laporan.`,
+      };
     }
-    const parsedJson = JSON.parse(jsonText);
-    const validated = extractedPeriodSchema.parse(parsedJson);
-    return finalizeExtractedPayload(validated, "ai-gemini");
   }
 
   // OpenAI Structured Outputs

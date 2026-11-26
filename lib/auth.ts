@@ -1,5 +1,5 @@
 import "server-only";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import {
   AdminSessionPayload,
@@ -27,17 +27,13 @@ export async function getSession(): Promise<AdminSessionPayload | null> {
 
 export async function setSessionCookie(
   token: string,
-  isHttpsRequest?: boolean
+  secureCookie = false
 ): Promise<void> {
   const cookieStore = await cookies();
-  const hdrs = await headers();
-  const forwardedProto = hdrs.get("x-forwarded-proto")?.split(",")[0]?.trim();
-  const secure = Boolean(isHttpsRequest || forwardedProto === "https");
-
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure,
+    secure: secureCookie,
     path: "/",
     maxAge: 60 * 60 * 24 * 7, // 7 days
   });

@@ -36,10 +36,10 @@ export function LoginForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(data.error || "Email atau password tidak valid.");
+        setError(data.error || `Login gagal (status ${res.status}).`);
         setLoading(false);
         return;
       }

@@ -9,11 +9,11 @@ const nextConfig: NextConfig = {
     "xlsx",
   ],
   outputFileTracingIncludes: {
-    "/": [
+    "/*": [
       "./node_modules/.prisma/client/**/*",
       "./node_modules/@prisma/client/**/*",
     ],
-    "/admin": [
+    "/**/*": [
       "./node_modules/.prisma/client/**/*",
       "./node_modules/@prisma/client/**/*",
     ],

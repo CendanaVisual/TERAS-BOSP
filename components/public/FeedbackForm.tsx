@@ -39,10 +39,10 @@ export function FeedbackForm() {
           message,
         }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(data.error || "Gagal mengirim pengaduan.");
+        setError(data.error || `Gagal mengirim pengaduan (status ${res.status}).`);
       } else {
         setSuccessMsg(
           data.message ||
@@ -137,7 +137,7 @@ export function FeedbackForm() {
             <Textarea
               id="message"
               required
-              minLength={10}
+              minLength={5}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Tuliskan masukan atau pertanyaan Anda secara jelas dan santun..."

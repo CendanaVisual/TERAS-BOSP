@@ -5,7 +5,11 @@ import {
   signSessionToken,
   verifyPassword,
 } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import {
+  getDatabaseErrorMessage,
+  getSanitizedDatabaseUrl,
+  prisma,
+} from "@/lib/prisma";
 
 const loginSchema = z.object({
   email: z.string().trim().email("Format email tidak valid"),
@@ -13,24 +17,56 @@ const loginSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  if (!getSanitizedDatabaseUrl()) {
+    return NextResponse.json(
+      {
+        error:
+          "Koneksi database belum terpasang di server. Tambahkan Environment Variable DATABASE_URL (Neon PostgreSQL) pada dashboard Vercel lalu lakukan Redeploy.",
+        code: "MISSING_DATABASE_URL",
+      },
+      { status: 503 }
+    );
+  }
+
+  let body: unknown;
   try {
-    const body = await request.json();
-    const parsed = loginSchema.safeParse(body);
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Format permintaan login tidak valid." },
+      { status: 400 }
+    );
+  }
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: parsed.error.issues[0]?.message || "Input login tidak valid." },
-        { status: 400 }
-      );
-    }
+  const parsed = loginSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message || "Input login tidak valid." },
+      { status: 400 }
+    );
+  }
 
+  try {
+    const emailNormalized = parsed.data.email.toLowerCase();
     const user = await prisma.user.findUnique({
-      where: { email: parsed.data.email.toLowerCase() },
+      where: { email: emailNormalized },
     });
 
     if (!user) {
+      const userCount = await prisma.user.count();
+      if (userCount === 0) {
+        return NextResponse.json(
+          {
+            error:
+              "Akun admin belum tersedia di database. Jalankan 'npm run db:seed' untuk menginisialisasi akun admin.",
+            code: "NO_ADMIN_USER",
+          },
+          { status: 503 }
+        );
+      }
+
       return NextResponse.json(
-        { error: "Email atau password salah." },
+        { error: "Email atau password salah. Periksa kembali kredensial Anda." },
         { status: 401 }
       );
     }
@@ -38,7 +74,7 @@ export async function POST(request: NextRequest) {
     const isValid = await verifyPassword(parsed.data.password, user.passwordHash);
     if (!isValid) {
       return NextResponse.json(
-        { error: "Email atau password salah." },
+        { error: "Email atau password salah. Periksa kembali kredensial Anda." },
         { status: 401 }
       );
     }
@@ -50,7 +86,14 @@ export async function POST(request: NextRequest) {
       role: user.role,
     });
 
-    await setSessionCookie(token, request.nextUrl.protocol === "https:");
+    const forwardedProto = request.headers
+      .get("x-forwarded-proto")
+      ?.split(",")[0]
+      ?.trim();
+    const isHttps =
+      request.nextUrl.protocol === "https:" || forwardedProto === "https";
+
+    await setSessionCookie(token, isHttps);
 
     return NextResponse.json({
       user: {
@@ -62,9 +105,10 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Login error:", error);
+    const dbErr = getDatabaseErrorMessage(error, "memproses login admin");
     return NextResponse.json(
-      { error: "Terjadi kesalahan saat proses login." },
-      { status: 500 }
+      { error: dbErr.message, code: dbErr.code },
+      { status: dbErr.status }
     );
   }
 }

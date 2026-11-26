@@ -1,22 +1,29 @@
 import { NextResponse } from "next/server";
-import { getSanitizedDatabaseUrl, prisma } from "@/lib/prisma";
+import { detectDatabaseEnvSource, prisma } from "@/lib/prisma";
 
 export async function GET() {
+  const dbSource = detectDatabaseEnvSource();
   const envStatus = {
-    hasDatabaseUrl: Boolean(getSanitizedDatabaseUrl()),
-    hasAuthSecret: Boolean(process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET),
+    hasDatabaseUrl: Boolean(dbSource.url),
+    databaseEnvKey: dbSource.key,
+    hasAuthSecret: Boolean(
+      process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
+    ),
     hasAiApiKey: Boolean(
-      process.env.AI_API_KEY || process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY
+      process.env.AI_API_KEY ||
+        process.env.GEMINI_API_KEY ||
+        process.env.OPENAI_API_KEY
     ),
     hasBlobToken: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
   };
 
-  if (!envStatus.hasDatabaseUrl) {
+  if (!dbSource.url) {
     return NextResponse.json(
       {
         status: "error",
         database: "missing_env",
-        message: "DATABASE_URL belum diatur pada environment server.",
+        message:
+          "DATABASE_URL (atau POSTGRES_URL / POSTGRES_PRISMA_URL) belum diatur pada environment server.",
         env: envStatus,
       },
       { status: 500 }
@@ -25,9 +32,19 @@ export async function GET() {
 
   try {
     await prisma.$queryRaw`SELECT 1`;
+    const [adminUsers, budgetPeriods, publicFeedbacks] = await Promise.all([
+      prisma.user.count(),
+      prisma.budgetPeriod.count(),
+      prisma.publicFeedback.count(),
+    ]);
     return NextResponse.json({
       status: "ok",
       database: "connected",
+      counts: {
+        adminUsers,
+        budgetPeriods,
+        publicFeedbacks,
+      },
       env: envStatus,
       timestamp: new Date().toISOString(),
     });
@@ -39,7 +56,7 @@ export async function GET() {
         status: "error",
         database: "disconnected",
         message: "Gagal terhubung ke database PostgreSQL Neon.",
-        detail: errorMessage.slice(0, 200),
+        detail: errorMessage.slice(0, 220),
         env: envStatus,
       },
       { status: 500 }

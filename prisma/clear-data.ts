@@ -9,6 +9,7 @@ async function main() {
   const deletedExpenses = await prisma.expenseItem.deleteMany();
   const deletedPeriods = await prisma.budgetPeriod.deleteMany();
   const deletedFeedbacks = await prisma.publicFeedback.deleteMany();
+  const deletedDocs = await prisma.storedDocument.deleteMany();
 
   // Pastikan akun admin utama tetap siap digunakan untuk masuk ke Dashboard Admin
   const adminEmail = "sdn7pedungan63@gmail.com";
@@ -57,6 +58,7 @@ async function main() {
     deletedExpenses: deletedExpenses.count,
     deletedPeriods: deletedPeriods.count,
     deletedFeedbacks: deletedFeedbacks.count,
+    deletedDocs: deletedDocs.count,
     activeAdmin: adminEmail,
   });
 }

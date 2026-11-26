@@ -426,6 +426,20 @@ function extractWithHeuristicFallback(doc: ParsedDocumentContent): ExtractedBosp
   );
 }
 
+function formatFriendlyAiError(aiError: unknown): string {
+  const raw = aiError instanceof Error ? aiError.message : String(aiError);
+  if (raw.includes("SERVICE_DISABLED") || raw.includes("aiplatform.googleapis.com")) {
+    return "API Vertex AI belum diaktifkan pada project Google Cloud kunci AQ. Anda. Gunakan kunci gratis Google AI Studio (berawalan AIza...) dari aistudio.google.com/apikey, atau aktifkan Vertex AI API di Google Cloud Console.";
+  }
+  if (raw.includes("API_KEY_INVALID") || raw.includes("API key not valid") || raw.includes("401")) {
+    return "AI_API_KEY tidak valid atau kedaluwarsa. Periksa kembali API key Google AI Studio (AIza...) atau OpenAI (sk-...) pada Vercel Environment Variables.";
+  }
+  if (raw.includes("429") || raw.includes("RESOURCE_EXHAUSTED") || raw.includes("quota")) {
+    return "Kuota AI_API_KEY sementara penuh (rate limit).";
+  }
+  return "Layanan AI eksternal sedang tidak dapat dijangkau.";
+}
+
 export async function extractBospWithAI(
   doc: ParsedDocumentContent
 ): Promise<ExtractedBospData> {
@@ -483,39 +497,46 @@ ${doc.extractedText || "(Teks PDF kosong atau berupa pindaian gambar, baca langs
     } catch (aiError) {
       console.error("Gemini AI extraction failed, using heuristic fallback:", aiError);
       const fallback = extractWithHeuristicFallback(doc);
-      const errDetail =
-        aiError instanceof Error ? aiError.message.slice(0, 140) : "Gangguan API AI";
       return {
         ...fallback,
-        warning: `Ekstraksi AI Gemini gagal (${errDetail}). Data tetap diekstrak memakai parser tabel lokal agar Anda tetap dapat memverifikasi dan mempublikasikan laporan.`,
+        warning: `${formatFriendlyAiError(aiError)} Data tetap berhasil diekstrak memakai parser tabel lokal sehingga Anda dapat langsung memeriksa dan mempublikasikan laporan.`,
       };
     }
   }
 
   // OpenAI Structured Outputs
-  const openai = new OpenAI({ apiKey });
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    temperature: 0.1,
-    messages: [
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: userPrompt },
-    ],
-    response_format: {
-      type: "json_schema",
-      json_schema: {
-        name: "bosp_extraction_schema",
-        strict: true,
-        schema: OPENAI_JSON_SCHEMA,
+  try {
+    const openai = new OpenAI({ apiKey });
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.1,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: userPrompt },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "bosp_extraction_schema",
+          strict: true,
+          schema: OPENAI_JSON_SCHEMA,
+        },
       },
-    },
-  });
+    });
 
-  const content = completion.choices[0]?.message?.content;
-  if (!content) {
-    throw new Error("OpenAI API mengembalikan respons kosong.");
+    const content = completion.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error("OpenAI API mengembalikan respons kosong.");
+    }
+    const parsedJson = JSON.parse(content);
+    const validated = extractedPeriodSchema.parse(parsedJson);
+    return finalizeExtractedPayload(validated, "ai-openai");
+  } catch (aiError) {
+    console.error("OpenAI extraction failed, using heuristic fallback:", aiError);
+    const fallback = extractWithHeuristicFallback(doc);
+    return {
+      ...fallback,
+      warning: `${formatFriendlyAiError(aiError)} Data tetap berhasil diekstrak memakai parser tabel lokal sehingga Anda dapat langsung memeriksa dan mempublikasikan laporan.`,
+    };
   }
-  const parsedJson = JSON.parse(content);
-  const validated = extractedPeriodSchema.parse(parsedJson);
-  return finalizeExtractedPayload(validated, "ai-openai");
 }

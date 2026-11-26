@@ -5,7 +5,10 @@ import { getSession } from "@/lib/auth";
 import { normalizeBospComponent } from "@/lib/bosp-constants";
 import { serializeBudgetPeriod } from "@/lib/bosp-queries";
 import { prisma } from "@/lib/prisma";
-import { storeOfficialDocument } from "@/lib/storage";
+import {
+  deleteStoredDbDocumentIfAny,
+  storeOfficialDocument,
+} from "@/lib/storage";
 
 const patchPeriodSchema = z.object({
   status: z.enum(["DRAFT", "PUBLISHED"]).optional(),
@@ -63,6 +66,10 @@ export async function PATCH(
       }
       const buffer = Buffer.from(await file.arrayBuffer());
       const stored = await storeOfficialDocument(buffer, file.name, file.type);
+
+      if (stored.url && existing.documentUrl && existing.documentUrl !== stored.url) {
+        await deleteStoredDbDocumentIfAny(existing.documentUrl);
+      }
 
       const updated = await prisma.budgetPeriod.update({
         where: { id },
@@ -157,7 +164,12 @@ export async function DELETE(
 
   try {
     const { id } = await context.params;
+    const existing = await prisma.budgetPeriod.findUnique({
+      where: { id },
+      select: { documentUrl: true },
+    });
     await prisma.budgetPeriod.delete({ where: { id } });
+    await deleteStoredDbDocumentIfAny(existing?.documentUrl);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting budget period:", error);

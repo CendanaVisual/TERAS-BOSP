@@ -41,7 +41,26 @@ export async function GET(
       ? `attachment; filename="${fileName}"`
       : `inline; filename="${fileName}"`;
 
-    // 1. If documentUrl points to remote Vercel Blob / HTTPS URL, proxy or stream it
+    // 1. If documentUrl is stored directly in Neon PostgreSQL (db://<id>)
+    if (!forcePdf && period.documentUrl && period.documentUrl.startsWith("db://")) {
+      const docId = period.documentUrl.slice("db://".length).trim();
+      const storedDoc = await prisma.storedDocument.findUnique({
+        where: { id: docId },
+      });
+      if (storedDoc) {
+        return new NextResponse(Buffer.from(storedDoc.data), {
+          status: 200,
+          headers: {
+            "Content-Type":
+              period.documentMimeType || storedDoc.mimeType || "application/pdf",
+            "Content-Disposition": disposition,
+            "Cache-Control": "public, max-age=300",
+          },
+        });
+      }
+    }
+
+    // 2. If documentUrl points to remote Vercel Blob / HTTPS URL, proxy or stream it
     if (!forcePdf && period.documentUrl && /^https?:\/\//i.test(period.documentUrl)) {
       const upstream = await fetch(period.documentUrl);
       if (upstream.ok) {

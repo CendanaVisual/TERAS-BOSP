@@ -457,10 +457,6 @@ Isi Teks / Tabel Dokumen:
 ${doc.extractedText || "(Teks PDF kosong atau berupa pindaian gambar, baca langsung dari lampiran PDF)."}`;
 
   if (provider === "gemini") {
-    const isEnterpriseExpress = apiKey.startsWith("AQ.");
-    const ai = new GoogleGenAI(
-      isEnterpriseExpress ? { enterprise: true, apiKey } : { apiKey }
-    );
     const parts: Array<
       | { text: string }
       | { inlineData: { mimeType: string; data: string } }
@@ -475,33 +471,69 @@ ${doc.extractedText || "(Teks PDF kosong atau berupa pindaian gambar, baca langs
       });
     }
 
-    try {
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: [{ role: "user", parts }],
-        config: {
-          systemInstruction: SYSTEM_PROMPT,
-          temperature: 0.1,
-          responseMimeType: "application/json",
-          responseSchema: GEMINI_RESPONSE_SCHEMA,
-        },
-      });
+    const configuredModel = process.env.AI_MODEL?.trim();
+    const candidateModels = [
+      ...(configuredModel ? [configuredModel] : []),
+      "gemini-3.1-flash-lite",
+      "gemini-3.8-flash",
+      "gemini-3-flash-preview",
+      "gemini-2.5-flash",
+    ].filter((m, idx, arr) => arr.indexOf(m) === idx);
 
-      const jsonText = response.text;
-      if (!jsonText) {
-        throw new Error("Gemini API mengembalikan respons kosong.");
+    // Always try standard Gemini Developer API first (works for both AIza... and AQ.... AI Studio keys).
+    // Only fall back to enterprise/Vertex Express mode if standard API rejects auth on an AQ. key.
+    const clientConfigs: Array<{ apiKey: string; enterprise?: boolean }> = [
+      { apiKey },
+      ...(apiKey.startsWith("AQ.") ? [{ enterprise: true, apiKey }] : []),
+    ];
+
+    let lastError: unknown = null;
+
+    for (const clientConfig of clientConfigs) {
+      const ai = new GoogleGenAI(clientConfig);
+      for (const model of candidateModels) {
+        try {
+          const response = await ai.models.generateContent({
+            model,
+            contents: [{ role: "user", parts }],
+            config: {
+              systemInstruction: SYSTEM_PROMPT,
+              temperature: 0.1,
+              responseMimeType: "application/json",
+              responseSchema: GEMINI_RESPONSE_SCHEMA,
+            },
+          });
+
+          const jsonText = response.text;
+          if (!jsonText) {
+            throw new Error(`Model ${model} mengembalikan respons kosong.`);
+          }
+          const parsedJson = JSON.parse(jsonText);
+          const validated = extractedPeriodSchema.parse(parsedJson);
+          return finalizeExtractedPayload(validated, "ai-gemini");
+        } catch (aiError) {
+          lastError = aiError;
+          const status =
+            typeof aiError === "object" && aiError !== null && "status" in aiError
+              ? Number((aiError as { status?: unknown }).status)
+              : 0;
+          console.warn(
+            `Gemini attempt failed (enterprise=${Boolean(clientConfig.enterprise)}, model=${model}, status=${status})`
+          );
+          // Auth/permission error applies to all models under this endpoint; switch clientConfig
+          if (status === 401 || status === 403) {
+            break;
+          }
+        }
       }
-      const parsedJson = JSON.parse(jsonText);
-      const validated = extractedPeriodSchema.parse(parsedJson);
-      return finalizeExtractedPayload(validated, "ai-gemini");
-    } catch (aiError) {
-      console.error("Gemini AI extraction failed, using heuristic fallback:", aiError);
-      const fallback = extractWithHeuristicFallback(doc);
-      return {
-        ...fallback,
-        warning: `${formatFriendlyAiError(aiError)} Data tetap berhasil diekstrak memakai parser tabel lokal sehingga Anda dapat langsung memeriksa dan mempublikasikan laporan.`,
-      };
     }
+
+    console.error("All Gemini extraction attempts failed, using heuristic fallback:", lastError);
+    const fallback = extractWithHeuristicFallback(doc);
+    return {
+      ...fallback,
+      warning: `${formatFriendlyAiError(lastError)} Data tetap berhasil diekstrak memakai parser tabel lokal sehingga Anda dapat langsung memeriksa dan mempublikasikan laporan.`,
+    };
   }
 
   // OpenAI Structured Outputs

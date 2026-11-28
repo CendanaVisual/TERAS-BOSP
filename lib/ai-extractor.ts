@@ -34,24 +34,29 @@ export type ExtractedBospData = z.infer<typeof extractedPeriodSchema> & {
   warning?: string;
 };
 
-const SYSTEM_PROMPT = `Anda adalah Akuntan Publik & Auditor Dana BOSP (Bantuan Operasional Satuan Pendidikan) Kementerian Pendidikan Indonesia yang ahli membaca laporan ARKAS (BKU, RKAS, dan Rekap Realisasi Penggunaan Dana BOSP).
+const SYSTEM_PROMPT = `Anda adalah Akuntan Publik & Auditor Dana BOSP (Bantuan Operasional Satuan Pendidikan) Kementerian Pendidikan Indonesia yang ahli membaca seluruh format laporan Excel/PDF ARKAS dan BOSP Salur (BKU, RKAS, K7/K7a/K7b, SPTJM, maupun Rekap Realisasi Penggunaan Dana BOSP).
 
 Tugas Anda:
-1. Baca seluruh dokumen laporan keuangan sekolah (Excel/PDF) yang diberikan.
+1. Baca seluruh sheet/halaman dokumen laporan keuangan sekolah (Excel/PDF) yang diberikan secara teliti.
 2. Identifikasi metadata periode:
-   - fiscalYear (integer, misal 2026)
-   - stage ("TAHAP_1" untuk Jan-Jun / Tahap 1, "TAHAP_2" untuk Jul-Des / Tahap 2, atau "TAHUNAN" untuk laporan setahun penuh)
-   - openingBalance (Saldo Awal / Sisa Tahun Lalu dalam Rupiah penuh, angka tanpa titik/koma pemisah ribuan)
-   - regularReceived (Penerimaan BOSP Reguler)
-   - performanceReceived (Penerimaan BOSP Kinerja, 0 jika tidak ada)
+   - fiscalYear (integer, misal 2025 atau 2026)
+   - stage ("TAHAP_1" untuk Jan-Jun / Tahap 1 / Semester 1, "TAHAP_2" untuk Jul-Des / Tahap 2 / Semester 2, atau "TAHUNAN" untuk laporan 1 tahun penuh)
+   - openingBalance (Saldo Awal / Sisa Tahun Lalu / SiLPA dalam Rupiah penuh, angka murni tanpa titik/koma ribuan)
+   - regularReceived (Penerimaan Dana BOSP Reguler)
+   - performanceReceived (Penerimaan Dana BOSP Kinerja, isi 0 jika tidak ada)
    - totalReceived (Total Dana BOSP Diterima = regularReceived + performanceReceived jika tidak tertulis eksplisit)
-   - totalSpent (Total Realisasi Belanja)
-   - endingBalance (Sisa Saldo Akhir)
-3. Ekstrak setiap baris rincian kegiatan/belanja (ABAIKAN baris subtotal/jumlah total agar tidak terjadi perhitungan ganda) ke dalam array "expenses".
+   - totalSpent (Total Realisasi Belanja = jumlah seluruh realisasi belanja yang sah)
+   - endingBalance (Sisa Saldo Akhir = openingBalance + totalReceived - totalSpent bila tidak tertulis eksplisit)
+   - notes (ringkasan singkat 1 kalimat mengenai dokumen sumber, misalnya nama sheet/periode)
+3. Ekstrak setiap baris rincian kegiatan/belanja yang sah ke dalam array "expenses":
+   - Dukung format Rekap RKAS vs Realisasi (ambil Anggaran/Pagu sebagai plannedAmount dan Realisasi sebagai realizedAmount).
+   - Dukung format BKU ARKAS (ambil baris Pengeluaran/Kredit sebagai realizedAmount; jika tidak ada kolom RKAS/Anggaran, isi plannedAmount sama dengan realizedAmount; ABAIKAN baris transaksi mutasi kas internal seperti "Tarik Tunai", "Setor Tunai", "Pergeseran Kas", "Saldo Awal", "Terima Dana BOSP", serta baris subtotal/jumlah total agar tidak terjadi perhitungan ganda).
+   - Dukung format Rekap per 12 Komponen Standar BOSP maupun format tabel bendahara sekolah lainnya.
+   - Jika kode rekening tidak tersedia pada baris, gunakan kode standar belanja BOSP yang relevan (misal "5.1.02.01.01.0024").
 4. Petakan setiap item belanja ke SALAH SATU dari 12 Komponen Standar BOSP berikut secara persis:
 ${BOSP_COMPONENTS.map((c, idx) => `   ${idx + 1}. "${c}"`).join("\n")}
-5. Gunakan fundSource "BOSP_KINERJA" jika uraian/sumber menyebut BOSP Kinerja / Sekolah Penggerak / Prestasi, dan "BOSP_REGULER" untuk selainnya.
-6. Pastikan seluruh nilai uang berupa angka numerik murni dalam Rupiah (tanpa "Rp", tanpa pemisah ribuan).`;
+5. Gunakan fundSource "BOSP_KINERJA" jika uraian/sumber/sheet menyebut BOSP Kinerja / Sekolah Penggerak / Prestasi, dan "BOSP_REGULER" untuk selainnya.
+6. Pastikan seluruh nilai uang berupa angka numerik murni dalam Rupiah (tanpa "Rp", tanpa pemisah ribuan, tidak negatif).`;
 
 const GEMINI_RESPONSE_SCHEMA: Schema = {
   type: Type.OBJECT,
@@ -188,21 +193,26 @@ function finalizeExtractedPayload(
   warning?: string
 ): ExtractedBospData {
   const normalizedExpenses = raw.expenses
-    .filter((e) => e.description.trim().length > 0)
-    .map((e) => ({
-      componentCategory: normalizeBospComponent(e.componentCategory || e.description),
-      accountCode: e.accountCode.trim() || "5.1.02.01.01.0001",
-      description: e.description.trim(),
-      fundSource: e.fundSource,
-      plannedAmount: Math.max(0, Math.round(e.plannedAmount)),
-      realizedAmount: Math.max(0, Math.round(e.realizedAmount)),
-    }));
+    .filter((e) => e.description.trim().length > 0 && (e.plannedAmount > 0 || e.realizedAmount > 0))
+    .map((e) => {
+      const realizedAmount = Math.max(0, Math.round(e.realizedAmount));
+      const rawPlanned = Math.max(0, Math.round(e.plannedAmount));
+      const plannedAmount = rawPlanned > 0 ? rawPlanned : realizedAmount;
+      return {
+        componentCategory: normalizeBospComponent(e.componentCategory || e.description),
+        accountCode: e.accountCode.trim() || "5.1.02.01.01.0024",
+        description: e.description.trim(),
+        fundSource: e.fundSource,
+        plannedAmount,
+        realizedAmount,
+      };
+    });
 
   const summedSpent = normalizedExpenses.reduce(
     (sum, item) => sum + item.realizedAmount,
     0
   );
-  const totalSpent = raw.totalSpent > 0 ? Math.round(raw.totalSpent) : summedSpent;
+  const totalSpent = summedSpent > 0 ? summedSpent : Math.round(raw.totalSpent);
   const regularReceived = Math.round(raw.regularReceived);
   const performanceReceived = Math.round(raw.performanceReceived);
   const totalReceived =

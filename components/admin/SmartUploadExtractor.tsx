@@ -54,6 +54,7 @@ export function SmartUploadExtractor({ onSaved }: SmartUploadExtractorProps) {
     docUrl: string;
     docName: string;
     docMimeType: string;
+    storageProvider?: string;
     storageWarning?: string;
   } | null>(null);
 
@@ -121,6 +122,7 @@ export function SmartUploadExtractor({ onSaved }: SmartUploadExtractorProps) {
         docUrl: data.document?.url || "",
         docName: data.document?.name || file.name,
         docMimeType: data.document?.mimeType || file.type,
+        storageProvider: data.document?.storageProvider,
         storageWarning: data.document?.storageWarning,
       });
       setHasDraft(true);
@@ -329,26 +331,40 @@ export function SmartUploadExtractor({ onSaved }: SmartUploadExtractorProps) {
 
       {/* Human-in-the-Loop Verification & Preview */}
       {hasDraft && (
-        <Card className="border-blue-200 ring-1 ring-blue-100">
-          <CardHeader className="border-b border-slate-100 bg-blue-50/40 pb-4">
+        <Card className="border-[#D9C7A3] ring-1 ring-[#C9A24D]/25">
+          <CardHeader className="border-b border-[#EFE6D5] bg-[#FAF4E8]/80 pb-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <CardTitle>Mode Review & Verifikasi (Human-in-the-Loop)</CardTitle>
+                  <CardTitle>Mode Review &amp; Verifikasi (Human-in-the-Loop)</CardTitle>
                   {extractionInfo && (
-                    <Badge
-                      variant={
-                        extractionInfo.mode === "heuristic-fallback"
-                          ? "amber"
-                          : "emerald"
-                      }
-                    >
-                      {extractionInfo.mode === "ai-gemini"
-                        ? "Diekstrak via Gemini AI"
-                        : extractionInfo.mode === "ai-openai"
-                        ? "Diekstrak via OpenAI"
-                        : "Parser Heuristik Lokal"}
-                    </Badge>
+                    <>
+                      <Badge
+                        variant={
+                          extractionInfo.mode === "heuristic-fallback"
+                            ? "amber"
+                            : "emerald"
+                        }
+                      >
+                        {extractionInfo.mode === "ai-gemini"
+                          ? "Diekstrak via Gemini AI"
+                          : extractionInfo.mode === "ai-openai"
+                          ? "Diekstrak via OpenAI"
+                          : "Parser Heuristik Lokal"}
+                      </Badge>
+                      {extractionInfo.storageProvider &&
+                        extractionInfo.storageProvider !== "none" && (
+                          <Badge variant="navy">
+                            {extractionInfo.storageProvider ===
+                            "vercel-blob-private"
+                              ? "Lampiran: Vercel Blob (Private Proxy)"
+                              : extractionInfo.storageProvider ===
+                                "vercel-blob-public"
+                              ? "Lampiran: Vercel Blob"
+                              : "Lampiran: Neon Database"}
+                          </Badge>
+                        )}
+                    </>
                   )}
                 </div>
                 <CardDescription>

@@ -4,6 +4,7 @@ import path from "path";
 import { getSession } from "@/lib/auth";
 import { generateBospOfficialPdf } from "@/lib/pdf-generator";
 import { prisma } from "@/lib/prisma";
+import { fetchStoredRemoteDocument } from "@/lib/storage";
 import { toNumber } from "@/lib/utils";
 
 export async function GET(
@@ -60,16 +61,15 @@ export async function GET(
       }
     }
 
-    // 2. If documentUrl points to remote Vercel Blob / HTTPS URL, proxy or stream it
+    // 2. If documentUrl points to remote Vercel Blob (public OR private) / HTTPS URL, stream it
     if (!forcePdf && period.documentUrl && /^https?:\/\//i.test(period.documentUrl)) {
-      const upstream = await fetch(period.documentUrl);
-      if (upstream.ok) {
-        const buffer = await upstream.arrayBuffer();
+      const remoteDoc = await fetchStoredRemoteDocument(period.documentUrl);
+      if (remoteDoc) {
         const contentType =
           period.documentMimeType ||
-          upstream.headers.get("content-type") ||
+          remoteDoc.contentType ||
           "application/pdf";
-        return new NextResponse(buffer, {
+        return new NextResponse(remoteDoc.body, {
           status: 200,
           headers: {
             "Content-Type": contentType,
